@@ -3,3 +3,6 @@
 configs/** -text
 tools/** -text
 templates/EXECUTION_INPUTS.json -text
+# Historical imports keep their original bytes.
+archive/** -text
+docs/history/NOTION_LB_ORIGINAL.md -text

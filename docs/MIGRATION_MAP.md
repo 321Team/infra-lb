@@ -23,3 +23,18 @@
 - infra-lb 초기 README 부모 commit: `af56e2dde761fdf39d90170c4c710a8d87b46a53`.
 
 정확한 경로·해시는 [SOURCE_LOCK.json](SOURCE_LOCK.json)을 참조한다. 이 문서는 소스 편입 목록이며 증적 PR14/15의 종결·승인·병합을 뜻하지 않는다.
+
+## 후속 LB 자료 편입 — 2026-09-17
+
+초기 PR의 미병합 HEAD를 부모로 자료 이관을 추가했다. 새 검토 HEAD는 PR 본문에서 확인한다.
+
+| 출처 | 편입/참조 |
+|---|---|
+| 기존 Stage A 구축 가이드 v1.5 | archive/stage-a-guide-v1.5 원본 보존 |
+| 완료 팩 v1.3 | archive/stage-a-completion-v1.3에 LB 소스·문서 12개 보존. 공통 playbook 1개는 infra-ansible 참조 |
+| 기존 Stage A export/보완 수집기 | archive/stage-a-support 원본 2개 보존 |
+| 수동 노션 기록 | docs/history 원본 보존; 이후 상태와 대조 |
+| 카카오톡 export | LB 관련 4개 구간 발췌와 원본 SHA·위치 |
+| Stage A/Permanent/DAD/preflight 증적 | docs/EVIDENCE_INDEX.md 및 MATERIALS_MANIFEST.json에 고정 Git 경로·blob SHA |
+
+운영 기준·인계 요약을 추가했으며 기존 cfg·DAD/preflight 코드와 테스트는 변경하지 않았다. 원본 증적 PR14/15는 계속 evidence에서 검토한다. 이번 추가 편입의 바이트/구문/링크 검증은 MATERIALS_VALIDATION.json을 따른다.

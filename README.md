@@ -4,6 +4,10 @@ FDS Kubernetes API Load Balancer configuration, validation and recovery
 
 P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기준선은 [baseline 이슈9](https://github.com/321Team/fds-project-baseline/issues/9), 실제 실행 원본과 인수 리뷰는 [fds-project-evidence](https://github.com/321Team/fds-project-evidence)에서 관리한다.
 
+## 추가 이관 자료
+
+[LB 자료·증적 통합 목록](docs/EVIDENCE_INDEX.md)에서 Stage A 구축 가이드 v1.5, 완료 팩 v1.3, 과거 export/보완 소스, 노션 작업 원본과 대화 발췌를 확인한다. [운영 기준](docs/OPERATIONS_BASELINE.md)과 [Stage A 인계 근거](docs/STAGE_A_HANDOFF.md)에 당시 기록과 후속 판정을 구분했다. `archive/`는 원본 보존용이며 현재 서버 재적용 패키지가 아니다.
+
 ## 현재 범위와 상태
 
 2026-09-17 편입 시점의 확인 결과다. 실시간 상태를 의미하지 않는다.
