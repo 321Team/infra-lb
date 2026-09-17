@@ -33,4 +33,4 @@
 ## 현재 분기에 편입한 실행 원본
 
 - [DAD 원본·수신 검토](../evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/README.md): 원본 PR14의 34개 파일을 byte 그대로 보존.
-- Stage B preflight 52개는 별도 후속 이관 분기에서 검토한다.
+- [Stage B preflight 원본·수신 검토](../evidence/P1-LB-01/stage-b/preflight-20260917T031743Z/README.md): 원본 PR15의 52개 파일을 byte 그대로 보존.

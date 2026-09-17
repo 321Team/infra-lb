@@ -1,0 +1,4 @@
+HAProxy version 3.0.5-8e879a5 2024/09/19 - https://haproxy.org/
+Status: long-term supported branch - will stop receiving fixes around Q2 2029.
+Known bugs: http://www.haproxy.org/bugs/bugs-3.0.5.html
+Running on: Linux 6.12.0-266.el10.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Sep  4 08:02:18 UTC 2026 x86_64

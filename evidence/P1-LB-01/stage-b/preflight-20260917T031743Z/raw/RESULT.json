@@ -1,0 +1,198 @@
+{
+  "status": "PRECHECK_NOT_READY",
+  "scope": "LB_CURRENT_SNAPSHOT_PREFLIGHT_ONLY",
+  "stage_b": "NOT_COMPLETED",
+  "authenticated_api": "NOT_TESTED",
+  "failover": "NOT_TESTED",
+  "final_acceptance": "PENDING",
+  "stop_reasons": [],
+  "incomplete_reasons": [],
+  "observations": [],
+  "before": {
+    "interface": "ens160",
+    "ipv4": "10.1.93.109",
+    "prefixlen": 24,
+    "mac": "00:0c:29:f7:65:94",
+    "haproxy": "active",
+    "listener": "10.1.93.109:6443",
+    "link": "UP"
+  },
+  "config_before": {
+    "pid": 1269,
+    "argv": [
+      "/usr/sbin/haproxy",
+      "-Ws",
+      "-f",
+      "/etc/haproxy/haproxy.cfg",
+      "-f",
+      "/etc/haproxy/conf.d",
+      "-p",
+      "/run/haproxy.pid"
+    ],
+    "config_hashes": {
+      "/etc/haproxy/haproxy.cfg": "afd19086ab8529d621185c231fa3c588eaeeb2025a08445e90f28cf27b00504f"
+    }
+  },
+  "config_valid": true,
+  "stats_before": {
+    "servers": {
+      "k8s-control01": {
+        "addr": "10.1.93.102:6443",
+        "status": "UP",
+        "check_status": "L4OK",
+        "weight": "1",
+        "act": "1",
+        "bck": "0"
+      },
+      "k8s-control02": {
+        "addr": "10.1.93.103:6443",
+        "status": "DOWN",
+        "check_status": "L4CON",
+        "weight": "1",
+        "act": "1",
+        "bck": "0"
+      },
+      "k8s-control03": {
+        "addr": "10.1.93.104:6443",
+        "status": "DOWN",
+        "check_status": "L4CON",
+        "weight": "1",
+        "act": "1",
+        "bck": "0"
+      }
+    },
+    "backend_status": "UP",
+    "all_three_up": false
+  },
+  "tcp": [
+    {
+      "server": "k8s-control01",
+      "source_ip": "10.1.93.109",
+      "target": "10.1.93.102:6443",
+      "started": {
+        "utc": "2026-09-17T03:17:43.786403+00:00",
+        "kst": "2026-09-17T12:17:43.786403+09:00"
+      },
+      "kind": "TCP_CONNECT_ONLY",
+      "connected": true,
+      "timeout_seconds": 3,
+      "errno": null,
+      "error": null,
+      "local_socket": [
+        "10.1.93.109",
+        56213
+      ],
+      "finished": {
+        "utc": "2026-09-17T03:17:43.787412+00:00",
+        "kst": "2026-09-17T12:17:43.787412+09:00"
+      },
+      "elapsed_seconds": 0.001011
+    },
+    {
+      "server": "k8s-control02",
+      "source_ip": "10.1.93.109",
+      "target": "10.1.93.103:6443",
+      "started": {
+        "utc": "2026-09-17T03:17:43.787585+00:00",
+        "kst": "2026-09-17T12:17:43.787585+09:00"
+      },
+      "kind": "TCP_CONNECT_ONLY",
+      "connected": false,
+      "timeout_seconds": 3,
+      "errno": 111,
+      "error": "ConnectionRefusedError: [Errno 111] Connection refused",
+      "local_socket": [
+        "10.1.93.109",
+        55633
+      ],
+      "finished": {
+        "utc": "2026-09-17T03:17:43.788823+00:00",
+        "kst": "2026-09-17T12:17:43.788823+09:00"
+      },
+      "elapsed_seconds": 0.00124
+    },
+    {
+      "server": "k8s-control03",
+      "source_ip": "10.1.93.109",
+      "target": "10.1.93.104:6443",
+      "started": {
+        "utc": "2026-09-17T03:17:43.788988+00:00",
+        "kst": "2026-09-17T12:17:43.788988+09:00"
+      },
+      "kind": "TCP_CONNECT_ONLY",
+      "connected": false,
+      "timeout_seconds": 3,
+      "errno": 111,
+      "error": "ConnectionRefusedError: [Errno 111] Connection refused",
+      "local_socket": [
+        "10.1.93.109",
+        47525
+      ],
+      "finished": {
+        "utc": "2026-09-17T03:17:43.802541+00:00",
+        "kst": "2026-09-17T12:17:43.802541+09:00"
+      },
+      "elapsed_seconds": 0.013559
+    }
+  ],
+  "stats_after": {
+    "servers": {
+      "k8s-control01": {
+        "addr": "10.1.93.102:6443",
+        "status": "UP",
+        "check_status": "L4OK",
+        "weight": "1",
+        "act": "1",
+        "bck": "0"
+      },
+      "k8s-control02": {
+        "addr": "10.1.93.103:6443",
+        "status": "DOWN",
+        "check_status": "L4CON",
+        "weight": "1",
+        "act": "1",
+        "bck": "0"
+      },
+      "k8s-control03": {
+        "addr": "10.1.93.104:6443",
+        "status": "DOWN",
+        "check_status": "L4CON",
+        "weight": "1",
+        "act": "1",
+        "bck": "0"
+      }
+    },
+    "backend_status": "UP",
+    "all_three_up": false
+  },
+  "after": {
+    "interface": "ens160",
+    "ipv4": "10.1.93.109",
+    "prefixlen": 24,
+    "mac": "00:0c:29:f7:65:94",
+    "haproxy": "active",
+    "listener": "10.1.93.109:6443",
+    "link": "UP"
+  },
+  "config_after": {
+    "pid": 1269,
+    "argv": [
+      "/usr/sbin/haproxy",
+      "-Ws",
+      "-f",
+      "/etc/haproxy/haproxy.cfg",
+      "-f",
+      "/etc/haproxy/conf.d",
+      "-p",
+      "/run/haproxy.pid"
+    ],
+    "config_hashes": {
+      "/etc/haproxy/haproxy.cfg": "afd19086ab8529d621185c231fa3c588eaeeb2025a08445e90f28cf27b00504f"
+    }
+  },
+  "postcheck": "MATCH",
+  "finished": {
+    "utc": "2026-09-17T03:17:43.959444+00:00",
+    "kst": "2026-09-17T12:17:43.959444+09:00"
+  }
+}
