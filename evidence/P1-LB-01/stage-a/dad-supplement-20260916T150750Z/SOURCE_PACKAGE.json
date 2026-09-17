@@ -1,0 +1,13 @@
+{
+  "source_type": "user-uploaded original archive and sidecar",
+  "archive_library_file_id": "libfile_8cd9994897dc819194acbda1bffe7469",
+  "sidecar_library_file_id": "libfile_397d14ff93cc8191ae8f2084818fa494",
+  "archive_name": "FDS_P1_LB_01_DAD_20260916T150750Z_2q4miky1.tar.gz",
+  "archive_sha256": "9a8c149d3f0e48a43b6d052c3389b7f01ae9857bf30b03cfd592c16927d850a0",
+  "git_preservation": "30 extracted text files including original manifest, plus original archive sidecar, byte-preserved; archive kept separately according to repository policy",
+  "archive_access_for_other_reviewers": "not verified; all extracted originals are available in this PR",
+  "approval_url": "https://github.com/321Team/fds-project-evidence/issues/4#issuecomment-5699238203",
+  "previous_stop_url": "https://github.com/321Team/fds-project-evidence/issues/4#issuecomment-5699648290",
+  "previous_stop_archive_sha256": "5c626027cf6972e125cb09439118f396404a10417b7aa9f00991c2fdb9321e59",
+  "historical_original_recovered": false
+}

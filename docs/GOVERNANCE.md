@@ -28,7 +28,9 @@
 ## 소스와 증적
 
 - 설정·수집기·시험 절차는 infra-lb에서 수정한다. 실행에는 검토된 commit SHA를 고정한다.
-- 원본 로그·명령 rc·archive·내부/외부 해시는 evidence 절차로 접수한다. 이 저장소에 실제 수집 결과나 압축 묶음을 쌓지 않는다.
+- LB 전용 실행 원본·rc·수신 검증은 `evidence/P1-LB-01/` 아래 별도 PR로 접수한다. 현재 이관 대상은 원본 evidence PR14(DAD)와 PR15(preflight)다. 압축 묶음은 기존 첨부 보관본에 두고 Git에는 내부 원본·제출 sidecar·검토 기록을 보존한다.
+- 원본 PR의 번호·대화·승인 작성자와 시각은 원래 저장소에 남긴다. 후속 검토는 이관 PR에서 진행하며 양쪽 링크와 고정 source HEAD를 기록한다. 원본 PR 종료는 이관 표시이며 병합·조건 해소·인수 완료가 아니다.
+- 공통 FUP PR7, Ansible PR13, 이미 병합된 증적 PR 및 baseline 요구사항은 기존 저장소에서 유지한다. [이관 현황](PR_MIGRATIONS.md)을 따른다.
 - 키·토큰·kubeconfig·admin.conf·환경 비밀값은 커밋하지 않는다. 테스트 fixture는 실제 신규 Runtime 증거로 사용하지 않는다.
 - 원본 byte와 과거 승인 이력을 수정하지 않는다. 보완 해석·새 결과는 새 기록으로 남긴다.
 - `docs/SOURCE_LOCK.json`은 초기 편입 출처 기록이다. 소스 변경 시 초기 출처를 지우지 않고 변경 PR 및 새 검증 근거를 남긴다.

@@ -1,0 +1,329 @@
+[
+  {
+    "name": "01_arping_version",
+    "argv": [
+      "/usr/bin/sudo",
+      "-n",
+      "--",
+      "/usr/bin/env",
+      "-i",
+      "PATH=/usr/sbin:/usr/bin:/sbin:/bin",
+      "LC_ALL=C",
+      "LANG=C",
+      "/usr/bin/timeout",
+      "--signal=TERM",
+      "--kill-after=2s",
+      "10s",
+      "/usr/bin/arping",
+      "-V"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:50.125339+00:00",
+      "kst": "2026-09-17T00:07:50.125339+09:00"
+    },
+    "privileged": true,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:50.342457+00:00",
+      "kst": "2026-09-17T00:07:50.342457+09:00"
+    },
+    "duration_seconds": 0.217114,
+    "stdout_file": "01_arping_version.stdout.txt",
+    "stderr_file": "01_arping_version.stderr.txt"
+  },
+  {
+    "name": "02_before_ip_address",
+    "argv": [
+      "/usr/sbin/ip",
+      "-j",
+      "-4",
+      "addr",
+      "show",
+      "dev",
+      "ens160"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:50.342759+00:00",
+      "kst": "2026-09-17T00:07:50.342759+09:00"
+    },
+    "privileged": false,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:50.347826+00:00",
+      "kst": "2026-09-17T00:07:50.347826+09:00"
+    },
+    "duration_seconds": 0.005075,
+    "stdout_file": "02_before_ip_address.stdout.txt",
+    "stderr_file": "02_before_ip_address.stderr.txt"
+  },
+  {
+    "name": "02_before_ip_link",
+    "argv": [
+      "/usr/sbin/ip",
+      "-j",
+      "link",
+      "show",
+      "dev",
+      "ens160"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:50.348147+00:00",
+      "kst": "2026-09-17T00:07:50.348147+09:00"
+    },
+    "privileged": false,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:50.349712+00:00",
+      "kst": "2026-09-17T00:07:50.349712+09:00"
+    },
+    "duration_seconds": 0.001566,
+    "stdout_file": "02_before_ip_link.stdout.txt",
+    "stderr_file": "02_before_ip_link.stderr.txt"
+  },
+  {
+    "name": "02_before_haproxy",
+    "argv": [
+      "/usr/bin/systemctl",
+      "is-active",
+      "haproxy.service"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:50.349929+00:00",
+      "kst": "2026-09-17T00:07:50.349929+09:00"
+    },
+    "privileged": false,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:50.353720+00:00",
+      "kst": "2026-09-17T00:07:50.353720+09:00"
+    },
+    "duration_seconds": 0.003794,
+    "stdout_file": "02_before_haproxy.stdout.txt",
+    "stderr_file": "02_before_haproxy.stderr.txt"
+  },
+  {
+    "name": "02_before_listeners",
+    "argv": [
+      "/usr/sbin/ss",
+      "-H",
+      "-lnt"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:50.353953+00:00",
+      "kst": "2026-09-17T00:07:50.353953+09:00"
+    },
+    "privileged": false,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:50.357799+00:00",
+      "kst": "2026-09-17T00:07:50.357799+09:00"
+    },
+    "duration_seconds": 0.003848,
+    "stdout_file": "02_before_listeners.stdout.txt",
+    "stderr_file": "02_before_listeners.stderr.txt"
+  },
+  {
+    "name": "03_peer_route",
+    "argv": [
+      "/usr/sbin/ip",
+      "-j",
+      "-4",
+      "route",
+      "get",
+      "10.1.93.254"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:50.358208+00:00",
+      "kst": "2026-09-17T00:07:50.358208+09:00"
+    },
+    "privileged": false,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:50.359750+00:00",
+      "kst": "2026-09-17T00:07:50.359750+09:00"
+    },
+    "duration_seconds": 0.001542,
+    "stdout_file": "03_peer_route.stdout.txt",
+    "stderr_file": "03_peer_route.stderr.txt"
+  },
+  {
+    "name": "04_l2_peer",
+    "argv": [
+      "/usr/bin/sudo",
+      "-n",
+      "--",
+      "/usr/bin/env",
+      "-i",
+      "PATH=/usr/sbin:/usr/bin:/sbin:/bin",
+      "LC_ALL=C",
+      "LANG=C",
+      "/usr/bin/timeout",
+      "--signal=TERM",
+      "--kill-after=2s",
+      "10s",
+      "/usr/bin/arping",
+      "-b",
+      "-f",
+      "-c",
+      "1",
+      "-I",
+      "ens160",
+      "-s",
+      "10.1.93.109",
+      "10.1.93.254"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:50.360022+00:00",
+      "kst": "2026-09-17T00:07:50.360022+09:00"
+    },
+    "privileged": true,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:50.392896+00:00",
+      "kst": "2026-09-17T00:07:50.392896+09:00"
+    },
+    "duration_seconds": 0.032884,
+    "stdout_file": "04_l2_peer.stdout.txt",
+    "stderr_file": "04_l2_peer.stderr.txt"
+  },
+  {
+    "name": "05_dad",
+    "argv": [
+      "/usr/bin/sudo",
+      "-n",
+      "--",
+      "/usr/bin/env",
+      "-i",
+      "PATH=/usr/sbin:/usr/bin:/sbin:/bin",
+      "LC_ALL=C",
+      "LANG=C",
+      "/usr/bin/timeout",
+      "--signal=TERM",
+      "--kill-after=2s",
+      "10s",
+      "/usr/bin/arping",
+      "-D",
+      "-c",
+      "3",
+      "-I",
+      "ens160",
+      "10.1.93.109"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:50.393761+00:00",
+      "kst": "2026-09-17T00:07:50.393761+09:00"
+    },
+    "privileged": true,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:53.434123+00:00",
+      "kst": "2026-09-17T00:07:53.434123+09:00"
+    },
+    "duration_seconds": 3.04037,
+    "stdout_file": "05_dad.stdout.txt",
+    "stderr_file": "05_dad.stderr.txt"
+  },
+  {
+    "name": "06_after_ip_address",
+    "argv": [
+      "/usr/sbin/ip",
+      "-j",
+      "-4",
+      "addr",
+      "show",
+      "dev",
+      "ens160"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:53.434636+00:00",
+      "kst": "2026-09-17T00:07:53.434636+09:00"
+    },
+    "privileged": false,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:53.436624+00:00",
+      "kst": "2026-09-17T00:07:53.436624+09:00"
+    },
+    "duration_seconds": 0.001969,
+    "stdout_file": "06_after_ip_address.stdout.txt",
+    "stderr_file": "06_after_ip_address.stderr.txt"
+  },
+  {
+    "name": "06_after_ip_link",
+    "argv": [
+      "/usr/sbin/ip",
+      "-j",
+      "link",
+      "show",
+      "dev",
+      "ens160"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:53.437114+00:00",
+      "kst": "2026-09-17T00:07:53.437114+09:00"
+    },
+    "privileged": false,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:53.439045+00:00",
+      "kst": "2026-09-17T00:07:53.439045+09:00"
+    },
+    "duration_seconds": 0.00192,
+    "stdout_file": "06_after_ip_link.stdout.txt",
+    "stderr_file": "06_after_ip_link.stderr.txt"
+  },
+  {
+    "name": "06_after_haproxy",
+    "argv": [
+      "/usr/bin/systemctl",
+      "is-active",
+      "haproxy.service"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:53.439428+00:00",
+      "kst": "2026-09-17T00:07:53.439428+09:00"
+    },
+    "privileged": false,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:53.443549+00:00",
+      "kst": "2026-09-17T00:07:53.443549+09:00"
+    },
+    "duration_seconds": 0.00413,
+    "stdout_file": "06_after_haproxy.stdout.txt",
+    "stderr_file": "06_after_haproxy.stderr.txt"
+  },
+  {
+    "name": "06_after_listeners",
+    "argv": [
+      "/usr/sbin/ss",
+      "-H",
+      "-lnt"
+    ],
+    "started": {
+      "utc": "2026-09-16T15:07:53.444176+00:00",
+      "kst": "2026-09-17T00:07:53.444176+09:00"
+    },
+    "privileged": false,
+    "return_code": 0,
+    "outer_timeout": false,
+    "finished": {
+      "utc": "2026-09-16T15:07:53.448557+00:00",
+      "kst": "2026-09-17T00:07:53.448557+09:00"
+    },
+    "duration_seconds": 0.004373,
+    "stdout_file": "06_after_listeners.stdout.txt",
+    "stderr_file": "06_after_listeners.stderr.txt"
+  }
+]

@@ -2,7 +2,7 @@
 
 FDS Kubernetes API Load Balancer configuration, validation and recovery
 
-P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기준선은 [baseline 이슈9](https://github.com/321Team/fds-project-baseline/issues/9), 실제 실행 원본과 인수 리뷰는 [fds-project-evidence](https://github.com/321Team/fds-project-evidence)에서 관리한다.
+P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기준선은 [baseline 이슈9](https://github.com/321Team/fds-project-baseline/issues/9), 현재 LB 전용 증적 PR의 검토는 이 저장소로 이관한다. 원본 PR 이력과 이전 인수 기록은 [fds-project-evidence](https://github.com/321Team/fds-project-evidence)에 보존하며 [PR 이관 현황](docs/PR_MIGRATIONS.md)에서 후속 위치를 확인한다.
 
 ## 추가 이관 자료
 
@@ -32,10 +32,10 @@ P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기�
 
 | 저장소 | 관리 범위 |
 |---|---|
-| infra-lb | LB 설정·검사 소스·실행/복구 절차·출처 잠금 |
+| infra-lb | LB 설정·검사 소스·절차·출처 잠금 및 이관된 LB 전용 증적 검토 |
 | [infra-ansible](https://github.com/321Team/infra-ansible) | 공통 inventory·OS/SSH/DNS·노드→LB Stage A playbook |
 | [infra-kubernetes](https://github.com/321Team/infra-kubernetes) | CP runtime/bootstrap/join·CNI·ICR 후속 노드 준비 |
-| [fds-project-evidence](https://github.com/321Team/fds-project-evidence) | 원본 실행 증적, 무결성 검증, 인수 리뷰 |
+| [fds-project-evidence](https://github.com/321Team/fds-project-evidence) | 이전 원본 PR·승인 이력, 공통 FUP 및 미이관 증적 |
 | [fds-project-baseline](https://github.com/321Team/fds-project-baseline/issues/9) | 요구사항·범위·최종 진행 상태 |
 
 공통 inventory와 Ansible playbook을 복제하지 않는다. CP2/3 준비 의존성은 Kubernetes 담당자의 실제 인수·준비 근거로 확인한다. 이번 편입은 ICR 전체 종결이나 새 진단 프레임워크를 추가 선행 조건으로 만들지 않는다.

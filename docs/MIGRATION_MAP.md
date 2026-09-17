@@ -6,8 +6,8 @@
 |---|---|---|
 | evidence [PR #1](https://github.com/321Team/fds-project-evidence/pull/1), [#5](https://github.com/321Team/fds-project-evidence/pull/5) | `configs/haproxy.cfg`의 Stage A 고정 설정 및 상태 참조 | 병합 이력, 원본 결과, 조건부 인수 기록 |
 | evidence [PR #6](https://github.com/321Team/fds-project-evidence/pull/6) | Permanent 조건의 확인 범위 링크 | 원본 출력과 당시 검토/승인 |
-| evidence [PR #14](https://github.com/321Team/fds-project-evidence/pull/14) | `tools/dad/collect_dad.py`, 기존 테스트, DAD runbook | 현재 DAD 원본·무결성·최종 해소 리뷰. 계속 원본 PR에서 진행 |
-| evidence [PR #15](https://github.com/321Team/fds-project-evidence/pull/15) | `tools/stage-b/collect_preflight.py`, 기존 테스트/fixture, 후속 절차 | CP1 UP·CP2/3 DOWN 원본 및 사전점검 리뷰. 계속 원본 PR에서 진행 |
+| evidence [PR #14](https://github.com/321Team/fds-project-evidence/pull/14) | `tools/dad/collect_dad.py`, 기존 테스트, DAD runbook | 원본 PR 객체·기존 대화 이력. 후속 증적 검토는 [이관 현황](PR_MIGRATIONS.md)을 따름 |
+| evidence [PR #15](https://github.com/321Team/fds-project-evidence/pull/15) | `tools/stage-b/collect_preflight.py`, 기존 테스트/fixture, 후속 절차 | 원본 PR 객체·기존 대화 이력. 후속 사전점검 검토는 [이관 현황](PR_MIGRATIONS.md)을 따름 |
 | evidence [PR #7](https://github.com/321Team/fds-project-evidence/pull/7) | LB 관련 연결만 참조 | FUP-04~09 공통 매핑. LB 단독 PR로 취급하지 않음 |
 | infra-ansible [Stage A playbook](https://github.com/321Team/infra-ansible/blob/57e7cc740e7a406387848c52f4aa56b98c516168/playbooks/p1-lb-01-stage-a-nodes.yml) | 고정 출처 참조 | 공통 inventory와 Node→LB 연결검사 소스는 원래 저장소에서 유지 |
 | baseline [이슈9](https://github.com/321Team/fds-project-baseline/issues/9) | 소스 저장소 및 편입 PR 연결 | 요구사항·잔여 조건·전체 상태 |
@@ -37,4 +37,4 @@
 | 카카오톡 export | LB 관련 4개 구간 발췌와 원본 SHA·위치 |
 | Stage A/Permanent/DAD/preflight 증적 | docs/EVIDENCE_INDEX.md 및 MATERIALS_MANIFEST.json에 고정 Git 경로·blob SHA |
 
-운영 기준·인계 요약을 추가했으며 기존 cfg·DAD/preflight 코드와 테스트는 변경하지 않았다. 원본 증적 PR14/15는 계속 evidence에서 검토한다. 이번 추가 편입의 바이트/구문/링크 검증은 MATERIALS_VALIDATION.json을 따른다.
+운영 기준·인계 요약을 추가했으며 기존 cfg·DAD/preflight 코드와 테스트는 변경하지 않았다. 당시 증적 PR14/15는 evidence에서 검토하도록 두었다. 이후 사용자 지시로 후속 검토를 infra-lb로 옮기며 최신 위치는 [PR 이관 현황](PR_MIGRATIONS.md)을 따른다. 이번 추가 편입의 바이트/구문/링크 검증은 MATERIALS_VALIDATION.json을 따른다.

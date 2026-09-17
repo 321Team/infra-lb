@@ -1,0 +1,1 @@
+[{"ifindex":2,"ifname":"ens160","flags":["BROADCAST","MULTICAST","UP","LOWER_UP"],"mtu":1500,"qdisc":"mq","operstate":"UP","linkmode":"DEFAULT","group":"default","txqlen":1000,"link_type":"ether","address":"00:0c:29:f7:65:94","broadcast":"ff:ff:ff:ff:ff:ff","altnames":["enp3s0","enx000c29f76594"]}]

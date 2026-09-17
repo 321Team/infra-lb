@@ -1,0 +1,4 @@
+ARPING 10.1.93.254 from 10.1.93.109 ens160
+Unicast reply from 10.1.93.254 [94:F3:92:6B:A8:40]  0.885ms
+Sent 1 probes (1 broadcast(s))
+Received 1 response(s)
