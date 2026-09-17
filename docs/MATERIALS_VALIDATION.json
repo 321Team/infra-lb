@@ -1,0 +1,48 @@
+{
+  "status": "MATERIALS_MIGRATION_STATIC_PASS",
+  "verified_at_utc": "2026-09-17T05:09:28.018451+00:00",
+  "base_commit": "1f4a25493c24ea9d7925cbbeea2d27608fd7d1d2",
+  "immutable_originals": 16,
+  "completion_pack_internal_manifest_entries": 12,
+  "completion_pack_crc": "PASS",
+  "shared_ansible_playbook_blob": "MATCH_NOT_COPIED",
+  "historical_bash_syntax": {
+    "result": "PASS",
+    "files": [
+      "archive/stage-a-completion-v1.3/p1-lb-01-stage-a-evidence-receiver.sh",
+      "archive/stage-a-completion-v1.3/p1-lb-01-stage-a-client-test.sh",
+      "archive/stage-a-completion-v1.3/p1-lb-01-stage-a-lb.sh",
+      "archive/stage-a-completion-v1.3/p1-lb-01-stage-a-transfer-lb.sh",
+      "archive/stage-a-completion-v1.3/p1-lb-01-stage-a-transfer-client.sh"
+    ]
+  },
+  "historical_python38_syntax": {
+    "result": "PASS",
+    "files": [
+      "archive/stage-a-support/p1-lb-01-stage-a-export-review-v1.1.py",
+      "archive/stage-a-support/p1-lb-01-stage-a-supplement-v1.0.py"
+    ]
+  },
+  "existing_sources_unchanged": [
+    "configs/haproxy.cfg",
+    "docs/SOURCE_LOCK.json",
+    "templates/EXECUTION_INPUTS.json",
+    "tools/dad/collect_dad.py",
+    "tools/dad/test_collect_dad.py",
+    "tools/stage-b/collect_preflight.py",
+    "tools/stage-b/fixtures/stage_a_stats.txt",
+    "tools/stage-b/test_preflight.py"
+  ],
+  "previous_test_result": {
+    "tests": 45,
+    "source_commit": "1f4a25493c24ea9d7925cbbeea2d27608fd7d1d2",
+    "rerun": false,
+    "reason": "active collectors/tests unchanged; this change adds historical materials and docs"
+  },
+  "evidence_primary_files": 125,
+  "evidence_related_files": 9,
+  "new_runtime": "NOT_RUN",
+  "historical_functional_tests": "NOT_RERUN",
+  "independent_review": "PENDING_NEW_HEAD",
+  "final_merge_approval": "PENDING"
+}

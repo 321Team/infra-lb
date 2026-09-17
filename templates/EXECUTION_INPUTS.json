@@ -1,0 +1,42 @@
+{
+  "status": "PREPARATION_ONLY_NOT_APPROVED_EXECUTION",
+  "lb_preflight": {
+    "host": "k8s-api-lb01",
+    "source_ipv4": "10.1.93.109",
+    "targets": ["10.1.93.102:6443", "10.1.93.103:6443", "10.1.93.104:6443"],
+    "changes_allowed": false,
+    "runtime_result": "NOT_RUN"
+  },
+  "authenticated_api": {
+    "preferred_source": "10.250.10.20",
+    "actual_source": null,
+    "context_identifier": null,
+    "expected_identity": null,
+    "approved_read_resource": null,
+    "endpoint": "https://10.1.93.109:6443",
+    "tls_verification_required": true,
+    "credentials_available_locally": null,
+    "result_evidence_url": null
+  },
+  "failover": {
+    "kind": null,
+    "cp_readiness_and_acceptance_evidence": null,
+    "three_backends_up_evidence": null,
+    "target_one_cp": null,
+    "operator": null,
+    "recovery_operator": null,
+    "management_or_oob_path": null,
+    "window_start_utc": null,
+    "window_end_utc": null,
+    "injection_command": null,
+    "recovery_command": null,
+    "maximum_fault_duration_seconds": null,
+    "sample_interval_seconds": null,
+    "baseline_observation_seconds": null,
+    "recovery_observation_seconds": null,
+    "maximum_failed_requests": null,
+    "maximum_continuous_failure_seconds": null,
+    "approval_record_url": null,
+    "runtime_result": "NOT_RUN"
+  }
+}
