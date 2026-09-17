@@ -1,0 +1,5 @@
+* text=auto eol=lf
+# Preserve imported configuration, collectors, tests and fixture bytes.
+configs/** -text
+tools/** -text
+templates/EXECUTION_INPUTS.json -text

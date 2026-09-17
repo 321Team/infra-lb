@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-09-17",
+  "scope": "initial source import; approvals and evidence remain at original PRs",
+  "base_commit": "af56e2dde761fdf39d90170c4c710a8d87b46a53",
+  "sources": [
+    {
+      "destination": "configs/haproxy.cfg",
+      "sha256": "afd19086ab8529d621185c231fa3c588eaeeb2025a08445e90f28cf27b00504f",
+      "size": 778,
+      "origin": "github",
+      "repository": "321Team/fds-project-evidence",
+      "commit": "90093f88167055f81e8789d2a848f44ead0ee9ce",
+      "path": "evidence/P1-LB-01/stage-a/received-20260907/07_haproxy.cfg",
+      "git_blob_sha": "43c927017a23183a8df17578477735084d76fcdf",
+      "url": "https://github.com/321Team/fds-project-evidence/blob/90093f88167055f81e8789d2a848f44ead0ee9ce/evidence/P1-LB-01/stage-a/received-20260907/07_haproxy.cfg",
+      "transformation": "none"
+    },
+    {
+      "destination": "tools/dad/collect_dad.py",
+      "sha256": "723f2a58f66cbb91ad5d83f13d4005ebe3e70ea5997811d8933122f898ea021a",
+      "size": 15134,
+      "origin": "github",
+      "repository": "321Team/fds-project-evidence",
+      "commit": "f74bda7eac39658c297a4dd5d1c590bd0717bcce",
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/collector-used.py",
+      "git_blob_sha": "a58408292259624c9984b2709268eebcd256adf7",
+      "url": "https://github.com/321Team/fds-project-evidence/blob/f74bda7eac39658c297a4dd5d1c590bd0717bcce/evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/collector-used.py",
+      "transformation": "none"
+    },
+    {
+      "destination": "tools/stage-b/collect_preflight.py",
+      "sha256": "b4e211dac2cee0eb4c926f90ee818dc83c727401b95173cb18a9174283707476",
+      "size": 19694,
+      "origin": "github",
+      "repository": "321Team/fds-project-evidence",
+      "commit": "c6ed08bdd7d54901dffc709fc9fa0d75e961f68b",
+      "path": "evidence/P1-LB-01/stage-b/preflight-20260917T031743Z/raw/collector-used.py",
+      "git_blob_sha": "8126ee259b2d7656b560bd5ba954c94b895d447f",
+      "url": "https://github.com/321Team/fds-project-evidence/blob/c6ed08bdd7d54901dffc709fc9fa0d75e961f68b/evidence/P1-LB-01/stage-b/preflight-20260917T031743Z/raw/collector-used.py",
+      "transformation": "none"
+    },
+    {
+      "destination": "tools/dad/test_collect_dad.py",
+      "sha256": "6f237b9d216a207684a33081d09968031d8aff7cae29acfe03387554cb32cfac",
+      "size": 15764,
+      "origin": "previously_delivered_kit",
+      "archive": "FDS_P1_LB_01_DAD_Supplement_v1.1.zip",
+      "archive_sha256": "9268950f824ddcf2669a30553b8803bce641a9b536a03b3014d13bc81cace795",
+      "archive_path": "FDS_P1_LB_01_DAD_Supplement_v1.1/test_collect_dad.py",
+      "transformation": "none"
+    },
+    {
+      "destination": "tools/stage-b/test_preflight.py",
+      "sha256": "01aa87eba38fe824f71515fa47f366a836e868794cb61d5ea92e3c8172edc194",
+      "size": 9396,
+      "origin": "previously_delivered_kit",
+      "archive": "FDS_P1_LB_01_StageB_Preflight_v1.0.zip",
+      "archive_sha256": "71627110d3fda27ec9084e015c4fe15679969b09ea011f184965f4105bd51782",
+      "archive_path": "FDS_P1_LB_01_StageB_Preflight_v1.0/test_preflight.py",
+      "transformation": "none"
+    },
+    {
+      "destination": "tools/stage-b/fixtures/stage_a_stats.txt",
+      "sha256": "011c403ae6667a95ff480e9868231f7f1cf8ea6205112fec585af5ed3d9b9938",
+      "size": 3007,
+      "origin": "previously_delivered_kit",
+      "archive": "FDS_P1_LB_01_StageB_Preflight_v1.0.zip",
+      "archive_sha256": "71627110d3fda27ec9084e015c4fe15679969b09ea011f184965f4105bd51782",
+      "archive_path": "FDS_P1_LB_01_StageB_Preflight_v1.0/fixtures/stage_a_stats.txt",
+      "transformation": "none"
+    },
+    {
+      "destination": "templates/EXECUTION_INPUTS.json",
+      "sha256": "90bdb6a5c656f75337a0292f4c259680addf85480b6cf466692d77c847e6f730",
+      "size": 1317,
+      "origin": "previously_delivered_kit",
+      "archive": "FDS_P1_LB_01_StageB_Preflight_v1.0.zip",
+      "archive_sha256": "71627110d3fda27ec9084e015c4fe15679969b09ea011f184965f4105bd51782",
+      "archive_path": "FDS_P1_LB_01_StageB_Preflight_v1.0/EXECUTION_INPUTS.json",
+      "transformation": "none"
+    },
+    {
+      "destination": "docs/runbooks/DAD.md",
+      "sha256": "acbbc2528522701229edb9120e4d931d2a9f22b96c930212348080ebcee85f64",
+      "origin": "adapted_previously_delivered_kit",
+      "archive": "FDS_P1_LB_01_DAD_Supplement_v1.1.zip",
+      "archive_sha256": "9268950f824ddcf2669a30553b8803bce641a9b536a03b3014d13bc81cace795",
+      "archive_path": "FDS_P1_LB_01_DAD_Supplement_v1.1/README.md",
+      "original_sha256": "6a0d8bfa6ffbb5b838a3b12c095e230009cc995a6a561a33189b33df99f2e0da",
+      "transformation": "repository paths and execution context/status; no collector logic change"
+    },
+    {
+      "destination": "docs/runbooks/LB_PREFLIGHT.md",
+      "sha256": "93b05efee8ea900e218bfeb800dafb41a14227a8347b1b5f0e7d346543682e86",
+      "origin": "adapted_previously_delivered_kit",
+      "archive": "FDS_P1_LB_01_StageB_Preflight_v1.0.zip",
+      "archive_sha256": "71627110d3fda27ec9084e015c4fe15679969b09ea011f184965f4105bd51782",
+      "archive_path": "FDS_P1_LB_01_StageB_Preflight_v1.0/README.md",
+      "original_sha256": "b9182929a0e21bdc959d477cf3ad0dc3a6957c74188d98e405fe426f4bfd8fce",
+      "transformation": "repository paths and execution context/status; no collector logic change"
+    },
+    {
+      "destination": "docs/runbooks/AUTHENTICATED_API.md",
+      "sha256": "88499c0c21701c2d43572caa0731bd166294e14f5673035f7f2b35c57c8fa85a",
+      "origin": "adapted_previously_delivered_kit",
+      "archive": "FDS_P1_LB_01_StageB_Preflight_v1.0.zip",
+      "archive_sha256": "71627110d3fda27ec9084e015c4fe15679969b09ea011f184965f4105bd51782",
+      "archive_path": "FDS_P1_LB_01_StageB_Preflight_v1.0/API_TEST_PROCEDURE.md",
+      "original_sha256": "4f2321e6e50c398d9ad8995a962d56c364a06e381e857b1997a8b4b9df47dcea",
+      "transformation": "repository paths and execution context/status; no collector logic change"
+    },
+    {
+      "destination": "docs/runbooks/FAILOVER.md",
+      "sha256": "aaf7fb9a05fb0578c0c426108d77eb15061365c45e5bb59eabcb131ee416799a",
+      "origin": "adapted_previously_delivered_kit",
+      "archive": "FDS_P1_LB_01_StageB_Preflight_v1.0.zip",
+      "archive_sha256": "71627110d3fda27ec9084e015c4fe15679969b09ea011f184965f4105bd51782",
+      "archive_path": "FDS_P1_LB_01_StageB_Preflight_v1.0/FAILOVER_PROCEDURE.md",
+      "original_sha256": "a6e9bed952fa4b22f933a596ad493e2b3392ba83d99ade36ca6701f97e905b46",
+      "transformation": "repository paths and execution context/status; no collector logic change"
+    }
+  ],
+  "external_ansible": {
+    "repository": "321Team/infra-ansible",
+    "commit": "57e7cc740e7a406387848c52f4aa56b98c516168",
+    "path": "playbooks/p1-lb-01-stage-a-nodes.yml",
+    "git_blob_sha": "6c5b093d305ee50a0f283573c49399aab64eda0b"
+  },
+  "runtime_archives": [
+    {
+      "pr": "https://github.com/321Team/fds-project-evidence/pull/14",
+      "sha256": "9a8c149d3f0e48a43b6d052c3389b7f01ae9857bf30b03cfd592c16927d850a0"
+    },
+    {
+      "pr": "https://github.com/321Team/fds-project-evidence/pull/15",
+      "sha256": "a1a7bb272a770ba44f5ae6542f0f6aee2a948cbbcf773a6f31242b83abf23281"
+    }
+  ]
+}

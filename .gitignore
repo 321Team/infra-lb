@@ -1,0 +1,27 @@
+# Local Python output
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+# Runtime evidence and original archives belong in fds-project-evidence
+/FDS_P1_LB_01_*/
+/evidence/
+/artifacts/
+/local-output/
+*.tar.gz
+*.zip
+*.tar.gz.sha256
+*.zip.sha256
+# Credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*kubeconfig*
+admin.conf
+.kube/
+id_rsa*
+id_ed25519*
