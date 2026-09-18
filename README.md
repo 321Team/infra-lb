@@ -28,7 +28,7 @@ P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기�
 - Backend: `k8s-control01/02/03`, `10.1.93.102/.103/.104:6443`.
 - 기준 HAProxy 버전 3.0.5, stats socket `/var/lib/haproxy/stats`.
 - 서비스 설정은 `/etc/haproxy/haproxy.cfg`와 `/etc/haproxy/conf.d`를 함께 읽는다. 이 저장소의 cfg만으로 전체 호스트 구성을 재현했다고 보지 않는다.
-- 독립 리뷰/인수 담당: 이하영 (`hayeounglee`). 최종 병합 판단: 이권욱 (`GWONUK`).
+- 코드·혼합 PR 독립 검토 경로: 이하영 (`hayeounglee`, PR 작성자인 경우 다른 적격 검토자). 최종 병합 판단: 이권욱 (`GWONUK`). 문서·운영 실행·결과 수용·AC 인수·종결은 책임 티켓의 Lead가 판단한다.
 
 | 저장소 | 관리 범위 |
 |---|---|
@@ -63,6 +63,6 @@ python3 -m unittest discover -s tools/stage-b -p 'test_*.py' -v
 
 ## 변경 정책
 
-`main` 직접 push·force push를 금지하고 branch → PR → 현재 HEAD의 독립 리뷰 → 이권욱 명시적 최종 승인 → 병합 순서를 따른다. Runtime 승인과 코드 병합 승인을 따로 기록한다. [정책](docs/GOVERNANCE.md)과 [PR 양식](.github/PULL_REQUEST_TEMPLATE.md)을 사용한다.
+`main` 직접 push·force push·자동 병합을 금지하고 작업 브랜치와 PR을 사용한다. 코드·실행 설정·혼합 PR은 현재 HEAD의 독립 리뷰 후 이권욱이 병합을 판단한다. 문서·증적만 변경하는 PR은 책임 Lead 검토로 처리한다. 코드 외 실행·인수·종결은 책임 Lead에게 위임하며, fds-project-evidence의 모든 PR은 독립 리뷰를 유지한다. 병합·Runtime·인수 결과는 구분해 기록한다. [정책](docs/GOVERNANCE.md)과 [PR 양식](.github/PULL_REQUEST_TEMPLATE.md)을 사용한다.
 
 초기 확인 시 `main.protected=false`다. 이 PR의 문서·양식은 운영 규칙이며 GitHub 강제 보호 설정이 켜졌다는 뜻이 아니다. 기술 강제 설정 상태와 후속 설정 항목은 정책 문서에 기록한다.
