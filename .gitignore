@@ -9,6 +9,7 @@ __pycache__/
 !/evidence/P1-LB-01/
 /evidence/P1-LB-01/*
 !/evidence/P1-LB-01/stage-a/
+!/evidence/P1-LB-01/stage-b/
 /artifacts/
 /local-output/
 *.tar.gz

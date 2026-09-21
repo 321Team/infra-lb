@@ -1,0 +1,71 @@
+[
+  {
+    "server": "k8s-control01",
+    "source_ip": "10.1.93.109",
+    "target": "10.1.93.102:6443",
+    "started": {
+      "utc": "2026-09-17T03:17:43.786403+00:00",
+      "kst": "2026-09-17T12:17:43.786403+09:00"
+    },
+    "kind": "TCP_CONNECT_ONLY",
+    "connected": true,
+    "timeout_seconds": 3,
+    "errno": null,
+    "error": null,
+    "local_socket": [
+      "10.1.93.109",
+      56213
+    ],
+    "finished": {
+      "utc": "2026-09-17T03:17:43.787412+00:00",
+      "kst": "2026-09-17T12:17:43.787412+09:00"
+    },
+    "elapsed_seconds": 0.001011
+  },
+  {
+    "server": "k8s-control02",
+    "source_ip": "10.1.93.109",
+    "target": "10.1.93.103:6443",
+    "started": {
+      "utc": "2026-09-17T03:17:43.787585+00:00",
+      "kst": "2026-09-17T12:17:43.787585+09:00"
+    },
+    "kind": "TCP_CONNECT_ONLY",
+    "connected": false,
+    "timeout_seconds": 3,
+    "errno": 111,
+    "error": "ConnectionRefusedError: [Errno 111] Connection refused",
+    "local_socket": [
+      "10.1.93.109",
+      55633
+    ],
+    "finished": {
+      "utc": "2026-09-17T03:17:43.788823+00:00",
+      "kst": "2026-09-17T12:17:43.788823+09:00"
+    },
+    "elapsed_seconds": 0.00124
+  },
+  {
+    "server": "k8s-control03",
+    "source_ip": "10.1.93.109",
+    "target": "10.1.93.104:6443",
+    "started": {
+      "utc": "2026-09-17T03:17:43.788988+00:00",
+      "kst": "2026-09-17T12:17:43.788988+09:00"
+    },
+    "kind": "TCP_CONNECT_ONLY",
+    "connected": false,
+    "timeout_seconds": 3,
+    "errno": 111,
+    "error": "ConnectionRefusedError: [Errno 111] Connection refused",
+    "local_socket": [
+      "10.1.93.109",
+      47525
+    ],
+    "finished": {
+      "utc": "2026-09-17T03:17:43.802541+00:00",
+      "kst": "2026-09-17T12:17:43.802541+09:00"
+    },
+    "elapsed_seconds": 0.013559
+  }
+]

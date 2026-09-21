@@ -1,0 +1,12 @@
+{
+  "source": "User-submitted original archive and sidecar in this conversation",
+  "archive_name": "FDS_P1_LB_01_STAGEB_PREFLIGHT_20260917T031743Z_ui0l6jwq.tar.gz",
+  "archive_sha256": "a1a7bb272a770ba44f5ae6542f0f6aee2a948cbbcf773a6f31242b83abf23281",
+  "archive_library_file_id": "libfile_1039274fa2288191bc5d8614c080f9d9",
+  "sidecar_name": "FDS_P1_LB_01_STAGEB_PREFLIGHT_20260917T031743Z_ui0l6jwq.tar.gz.sha256",
+  "sidecar_library_file_id": "libfile_904be8d66bbc8191b806593e737bb549",
+  "archive_bytes_preserved_separately": true,
+  "archive_in_git": false,
+  "raw_content_handling": "All 47 regular files copied byte-for-byte, including NUL-delimited cmdline outputs.",
+  "local_manifest_is_new_registration_metadata": true
+}

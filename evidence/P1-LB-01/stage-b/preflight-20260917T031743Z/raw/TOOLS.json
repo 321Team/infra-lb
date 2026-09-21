@@ -1,0 +1,117 @@
+{
+  "ip": {
+    "path": "/usr/sbin/ip",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 826584,
+    "executable_for_login_user": true,
+    "sha256": "f2c4b79fc1a0ab051de4a83497c5de00ea0ad857c08c900bb8a8bf2ffcea8d4d",
+    "hash_status": "COLLECTED"
+  },
+  "ss": {
+    "path": "/usr/sbin/ss",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 134592,
+    "executable_for_login_user": true,
+    "sha256": "d8f70957e61d11792cb236714fc185f318658a24ee1ad395a272e584c584b7d6",
+    "hash_status": "COLLECTED"
+  },
+  "systemctl": {
+    "path": "/usr/bin/systemctl",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 326648,
+    "executable_for_login_user": true,
+    "sha256": "94adf44a9d35fae1571f1075f83518b0cdfe74464922ab98b9d13a1b86632339",
+    "hash_status": "COLLECTED"
+  },
+  "cat": {
+    "path": "/usr/bin/cat",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 40744,
+    "executable_for_login_user": true,
+    "sha256": "9058ea81ca7773766b2032daa06690f051074380ce905ac1111c90d3e67b2c7a",
+    "hash_status": "COLLECTED"
+  },
+  "sha256sum": {
+    "path": "/usr/bin/sha256sum",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 40744,
+    "executable_for_login_user": true,
+    "sha256": "b9e7385d104efcdf164bfeaabafe7d2f37d1dbe52fc7046ac17dbf1b05d3822c",
+    "hash_status": "COLLECTED"
+  },
+  "find": {
+    "path": "/usr/bin/find",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 209296,
+    "executable_for_login_user": true,
+    "sha256": "db26093c39ff84071979cf35d517096c836af5248e0b76ec93142bf25af9e6e3",
+    "hash_status": "COLLECTED"
+  },
+  "haproxy": {
+    "path": "/usr/sbin/haproxy",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 3526864,
+    "executable_for_login_user": true,
+    "sha256": "7f2fcf59f5a587f23326621bac4ddf0f12e49e6e09443b6f0fffcc4a8fa2c4c0",
+    "hash_status": "COLLECTED"
+  },
+  "sudo": {
+    "path": "/usr/bin/sudo",
+    "mode": "0o4111",
+    "uid": 0,
+    "gid": 0,
+    "size": 297736,
+    "executable_for_login_user": true,
+    "sha256": null,
+    "hash_status": "UNAVAILABLE_PERMISSION_DENIED",
+    "hash_error": {
+      "type": "PermissionError",
+      "errno": 13,
+      "message": "[Errno 13] Permission denied: '/usr/bin/sudo'"
+    }
+  },
+  "env": {
+    "path": "/usr/bin/env",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 49544,
+    "executable_for_login_user": true,
+    "sha256": "23035fb581bb7bb8cd7d6090b6c6d58e33cea2f7049fe12081ac7d1c8b18cfd5",
+    "hash_status": "COLLECTED"
+  },
+  "timeout": {
+    "path": "/usr/bin/timeout",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 41248,
+    "executable_for_login_user": true,
+    "sha256": "8f29eaa97e72f37d00b71a755fd31adfcbfe070772726720b11e402839966038",
+    "hash_status": "COLLECTED"
+  },
+  "socat": {
+    "path": "/usr/bin/socat",
+    "mode": "0o755",
+    "uid": 0,
+    "gid": 0,
+    "size": 339136,
+    "executable_for_login_user": true,
+    "sha256": "7586532011f34c66e1d088ebc01a00cae0763ed0e3c4858e90934f0d5778f5f4",
+    "hash_status": "COLLECTED"
+  }
+}

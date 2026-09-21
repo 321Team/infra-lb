@@ -1,0 +1,92 @@
+{
+  "verification_scope": "RECEIVED_BYTES_AND_RECORDED_RUNTIME_OUTPUTS",
+  "reviewer": "Codex; independent human acceptance not granted",
+  "verified_at_utc": "2026-09-17T03:24:12.590049+00:00",
+  "source_archive": "FDS_P1_LB_01_STAGEB_PREFLIGHT_20260917T031743Z_ui0l6jwq.tar.gz",
+  "source_archive_bytes": 15085,
+  "source_archive_sha256": "a1a7bb272a770ba44f5ae6542f0f6aee2a948cbbcf773a6f31242b83abf23281",
+  "external_sidecar_match": true,
+  "internal_manifest_entries": 46,
+  "internal_manifest_matches": 46,
+  "internal_manifest_coverage": "All 46 regular files other than SHA256SUMS; no extras",
+  "raw_files_including_manifest": 47,
+  "unsafe_archive_members": 0,
+  "collector_sha256": "b4e211dac2cee0eb4c926f90ee818dc83c727401b95173cb18a9174283707476",
+  "collector_matches_delivered_v1_0": true,
+  "collection_started": {
+    "utc": "2026-09-17T03:17:43.372369+00:00",
+    "kst": "2026-09-17T12:17:43.372369+09:00"
+  },
+  "collection_finished": {
+    "utc": "2026-09-17T03:17:43.959444+00:00",
+    "kst": "2026-09-17T12:17:43.959444+09:00"
+  },
+  "commands": {
+    "count": 20,
+    "rc_zero": 20,
+    "empty_stderr": 20,
+    "timeouts": 0,
+    "argv_stdin_matches_reviewed_read_only_scope": 20,
+    "utc_kst_and_command_order_consistent": true
+  },
+  "tcp": {
+    "source": "10.1.93.109",
+    "attempts": 3,
+    "connected": 1,
+    "refused_errno_111": 2,
+    "note": "Python socket probes are separate from the 20 external command return codes."
+  },
+  "before_after_identical_raw_stdout_pairs": 8,
+  "config_check_rc": 0,
+  "config_sha256_matches_stage_a": true,
+  "haproxy_main_pid_before_after": [
+    1269,
+    1269
+  ],
+  "config_directory_nonhidden_cfg_files": 0,
+  "backend_rows": [
+    {
+      "server": "k8s-control01",
+      "target": "10.1.93.102:6443",
+      "before": "UP/L4OK",
+      "after": "UP/L4OK",
+      "tcp": "CONNECTED"
+    },
+    {
+      "server": "k8s-control02",
+      "target": "10.1.93.103:6443",
+      "before": "DOWN/L4CON",
+      "after": "DOWN/L4CON",
+      "tcp": "CONNECTION_REFUSED"
+    },
+    {
+      "server": "k8s-control03",
+      "target": "10.1.93.104:6443",
+      "before": "DOWN/L4CON",
+      "after": "DOWN/L4CON",
+      "tcp": "CONNECTION_REFUSED"
+    }
+  ],
+  "auxiliary_tool_hashes": {
+    "collected": 10,
+    "total": 11,
+    "unavailable": [
+      "sudo: mode 0o4111 / read permission denied"
+    ]
+  },
+  "verified_verdict": "PRECHECK_NOT_READY",
+  "lb_observed_config_service_listener": "PASS_CURRENT_SNAPSHOT",
+  "three_backends_ready": false,
+  "authenticated_api": "NOT_TESTED",
+  "failover_recovery": "NOT_TESTED",
+  "stage_b": "NOT_COMPLETED",
+  "final_acceptance": "PENDING",
+  "root_cause_cp2_cp3": "UNDETERMINED; no CP-side listener/service/firewall evidence in this receipt",
+  "limitations": [
+    "Received evidence verification, not independent live server execution.",
+    "One snapshot, not continuous availability proof or Kubernetes acceptance.",
+    "Aggregate BACKEND UP does not establish that all three servers are UP.",
+    "Checksums establish received-byte consistency, not standalone authenticity or technical acceptance.",
+    "Configuration hashes and PID stable during collection do not independently prove the exact historical loaded bytes."
+  ]
+}
