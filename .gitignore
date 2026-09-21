@@ -3,9 +3,12 @@ __pycache__/
 *.py[cod]
 .venv/
 .pytest_cache/
-# Runtime evidence and original archives belong in fds-project-evidence
+# Unreviewed local output and original archive bundles remain outside Git
 /FDS_P1_LB_01_*/
-/evidence/
+/evidence/*
+!/evidence/P1-LB-01/
+/evidence/P1-LB-01/*
+!/evidence/P1-LB-01/stage-a/
 /artifacts/
 /local-output/
 *.tar.gz
@@ -25,3 +28,6 @@ admin.conf
 .kube/
 id_rsa*
 id_ed25519*
+
+# Preserve reviewed LB submission sidecars. Archives remain ignored.
+!/evidence/P1-LB-01/**/source/*.tar.gz.sha256

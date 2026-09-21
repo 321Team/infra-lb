@@ -1,0 +1,238 @@
+{
+  "migration_date": "2026-09-17",
+  "source_repository": "321Team/fds-project-evidence",
+  "source_pr": 14,
+  "source_url": "https://github.com/321Team/fds-project-evidence/pull/14",
+  "source_head": "f74bda7eac39658c297a4dd5d1c590bd0717bcce",
+  "source_base": "90093f88167055f81e8789d2a848f44ead0ee9ce",
+  "destination_repository": "321Team/infra-lb",
+  "destination_branch": "chore/migrate-evidence-pr14-dad",
+  "source_title": "[FUP-09] 현재 시점 DAD 원본 수신·검증 및 잔여 인수 조건 확인",
+  "source_body_snapshot": "## 문제와 변경\n\nFUP-09의 LB-A-01 DAD는 과거 채팅 발췌만 있어 원본·종료 코드가 부족했다. [이하영의 현재 시점 재검사 승인](https://github.com/321Team/fds-project-evidence/issues/4#issuecomment-5699238203)에 따라 사용자가 실행한 v1.1 원본을 등록한다. 현재 관측 결과는 PASS이며 실제 인수 조건 해소는 리뷰어 확인 대기다.\n\n**검토 HEAD: `f74bda7eac39658c297a4dd5d1c590bd0717bcce`**  \n기준 main: `90093f88167055f81e8789d2a848f44ead0ee9ce`  \n연결: [FUP-09 #4](https://github.com/321Team/fds-project-evidence/issues/4) · [P1-LB-01 #9](https://github.com/321Team/fds-project-baseline/issues/9)\n\n## 제출 원본과 직접 대조\n\n- 수집: **2026-09-17 00:07:50~53 KST / 2026-09-16 15:07:50~53 UTC**. 파일명은 UTC다.\n- 대상: `k8s-api-lb01 / ens160 / 10.1.93.109/24`.\n- 사용자 첨부 `FDS_P1_LB_01_DAD_20260916T150750Z_2q4miky1.tar.gz` (10,044 bytes), SHA-256 `9a8c149d3f0e48a43b6d052c3389b7f01ae9857bf30b03cfd592c16927d850a0`, 제출 sidecar 일치.\n- 내부 **29/29 SHA-256 일치**, 원본 Manifest 포함 **30개 파일** 바이트 보존. 제공 v1.1 수집기와 SHA 동일.\n- 명령 **12/12 예상 argv·rc=0**, stderr 공란, timeout/실행 오류 없음, 시각·시간대·순서 대조.\n- 사전 L2 ARP 송신 1·응답 1·rc=0 후 **DAD 송신 3·응답 0·rc=0**.\n- 전후 주소·링크·HAProxy·Listener stdout 4개가 각각 byte 동일.\n- 도구 Hash는 **6/7**. sudo는 root 소유 mode `0o4111`, 일반 계정 읽기 권한 오류로 Hash 미확인이다. sudo 경유 명령 3건은 모두 정상 종료했고 필수 증적 Hash에는 누락이 없다.\n\n[검토 안내](https://github.com/321Team/fds-project-evidence/blob/f74bda7eac39658c297a4dd5d1c590bd0717bcce/evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/README.md) · [원본 DAD](https://github.com/321Team/fds-project-evidence/blob/f74bda7eac39658c297a4dd5d1c590bd0717bcce/evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/05_dad.stdout.txt) · [명령/RC/시각](https://github.com/321Team/fds-project-evidence/blob/f74bda7eac39658c297a4dd5d1c590bd0717bcce/evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/COMMANDS.json) · [검증 JSON](https://github.com/321Team/fds-project-evidence/blob/f74bda7eac39658c297a4dd5d1c590bd0717bcce/evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/VERIFICATION.json) · [원본 Manifest](https://github.com/321Team/fds-project-evidence/blob/f74bda7eac39658c297a4dd5d1c590bd0717bcce/evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/SHA256SUMS)\n\n## 편입 범위·보존\n\n- 신규 **34개**: 내부 원본 30개, 제출 sidecar 1개, 수신 검토 3개.\n- 관리 갱신 **2개**: 루트 README와 REGISTRY_SHA256SUMS.\n- 기존 **678개** 파일의 blob/mode 동일, 삭제 없음. 결과 Tree 총 **714개** 파일. 변경 36개 Git blob SHA를 로컬 바이트와 대조했다.\n- 루트 Manifest는 기존 430개 중 README 항목 갱신 및 신규 34개 추가로 **464개**다. 저장소 전체 714개를 전수 Hash 검증했다는 의미는 아니다.\n- tar.gz는 별도 제출 보관본에 원래 바이트로 보존하며 Git에는 모든 내부 원본을 제공한다. 다른 리뷰어의 별도 보관본 접근까지 확인한 것은 아니다.\n\n## 요청하는 리뷰\n\n이하영: 이 HEAD의 원본·무결성·명령/결과·수집 한계 확인과 함께, **현재 시점 보완 증적으로 LB-A-01 잔여 조건을 해소하는지** 실제 검토자·일시/시간대·확인 Commit·수용 범위/남은 조건을 회신해 주세요. 편입 검토와 인수 판단을 회신에 구분해 기록해 주세요.\n\n- 기존 Stage A Technical/Evidence PASS·조건부 인수, Permanent 조건 해소는 유지한다.\n- 과거 8/31 원본은 여전히 미확보다. 현재 L2 관측의 중복 응답 미검출을 과거 복구·미래 유일성 보장으로 확대하지 않는다.\n- 수집기 자체 정적/모의 25건과 이번 대상 LB Runtime 수신 검증을 구분한다. 새 독립 승인·CI·병합은 아직 없으며 이 작업에서 서버 명령을 다시 실행하지 않았다.\n- Stage B 3 backend UP·인증 API·failover/recovery, Bootstrap 승인 및 전체 P1-LB Done은 이 PR로 생성하지 않는다.\n- [v1.0 STOP 및 수정 이력](https://github.com/321Team/fds-project-evidence/issues/4#issuecomment-5699648290)은 보존한다. PR #7·#13 및 다른 FUP 범위를 변경하지 않는다.\n",
+  "source_state_at_capture": "open",
+  "source_review_submissions_at_capture": [],
+  "source_requested_reviewers": [
+    "hayeounglee"
+  ],
+  "source_comments_snapshot": [
+    {
+      "id": 5708473231,
+      "url": "https://github.com/321Team/fds-project-evidence/pull/14#issuecomment-5708473231",
+      "author": "GWONUK",
+      "created_at": "2026-09-17T04:22:22Z",
+      "body": "LB 소스 관리 저장소 편입 연결 — 2026-09-17\n\n[infra-lb 초기 PR #1](https://github.com/321Team/infra-lb/pull/1)에 DAD v1.1 collector와 기존 테스트·절차를 편입했습니다. 검토 HEAD는 `1f4a25493c24ea9d7925cbbeea2d27608fd7d1d2`입니다. 설정·수집기는 고정 원본과 byte 동일하며 로컬 테스트 45/45, 원격 등록 20/20 파일 SHA 검증을 마쳤습니다. 이하영 독립 리뷰를 요청했고 병합은 대기입니다.\n\n이 PR의 원본 증적·대화·리뷰·인수 범위는 여기서 계속 관리합니다. 새 소스 PR로 기존 승인 효력을 승계하거나 이 증빙 PR을 종결하지 않습니다. 소스 편입으로 추가 서버 검사를 수행하지 않았습니다.\n\n[이관 대응표](https://github.com/321Team/infra-lb/blob/1f4a25493c24ea9d7925cbbeea2d27608fd7d1d2/docs/MIGRATION_MAP.md) · [소스 출처/해시](https://github.com/321Team/infra-lb/blob/1f4a25493c24ea9d7925cbbeea2d27608fd7d1d2/docs/SOURCE_LOCK.json)."
+    }
+  ],
+  "history_policy": "Original PR objects, authorship, review history and branches remain in the source repository. This JSON is an attributed snapshot, not a replayed review.",
+  "approval_policy": "No approval inherited. Review destination HEAD independently. Source closure denotes migration only.",
+  "source_admin_files_adapted_not_copied": [
+    "README.md",
+    "REGISTRY_SHA256SUMS"
+  ],
+  "files": [
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/README.md",
+      "git_blob_sha": "b845c54a9b65d7621ba36bd76c7647c382f5e8dd",
+      "sha256": "9ee0af147f291c1725bb7dfe91ff60ac39ea68c712ed56e9d5934f41442c70b2",
+      "bytes": 4811
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/SOURCE_PACKAGE.json",
+      "git_blob_sha": "f0f6cb4e102158be49384b9be63927fae48c49c2",
+      "sha256": "14a10a1d66190b1e12d0f5239f6de5bf50e2ed16e06746e336c0e956d18be88c",
+      "bytes": 1010
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/VERIFICATION.json",
+      "git_blob_sha": "2a0c224936602fef0a98f010c8bef78e92836eb7",
+      "sha256": "17433b3b49dbc7a8126ff1f6c5e80b3f377651ae7ab15b58fbc4fe336d30d13b",
+      "bytes": 5310
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/01_arping_version.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/01_arping_version.stdout.txt",
+      "git_blob_sha": "f8f583b9821c531ecd97899291ae0d3245327324",
+      "sha256": "a39bd98031c01e22d3fb7caf0358e62cebd5438283469d28fb9732eedabbd0d5",
+      "bytes": 112
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/02_before_haproxy.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/02_before_haproxy.stdout.txt",
+      "git_blob_sha": "584c84786d9f1c072767a37bc1ba690769b6e15f",
+      "sha256": "45df5ad5e0ecfa54d3226343e0e6857337494ba6e32f189d1174070665d8c659",
+      "bytes": 7
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/02_before_ip_address.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/02_before_ip_address.stdout.txt",
+      "git_blob_sha": "42825f71b5832d10910c7944b5e23ba8d23a1e1d",
+      "sha256": "6b932073778b78e18633368872e469c5734c1b2fe3658293ac87430e191b1e14",
+      "bytes": 409
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/02_before_ip_link.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/02_before_ip_link.stdout.txt",
+      "git_blob_sha": "8bb195243ce50332321be368324723e250fffb3e",
+      "sha256": "d0b4d5a76169fd1bbaf278360ae49fbbd95c35201a79f19ef79d182499da523f",
+      "bytes": 300
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/02_before_listeners.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/02_before_listeners.stdout.txt",
+      "git_blob_sha": "7c773966a348a998b867e4441a950157b4fb898c",
+      "sha256": "68e167240d004688c0e462dff8bc4c9ca6271fed8261140e047e2b4b6509735d",
+      "bytes": 240
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/03_peer_route.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/03_peer_route.stdout.txt",
+      "git_blob_sha": "6640bfedb2339503d2a61f244e114cb0a786fe04",
+      "sha256": "45aa403870187953cf223be82cba2080e0803546774a71e5256a2328b90df38f",
+      "bytes": 96
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/04_l2_peer.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/04_l2_peer.stdout.txt",
+      "git_blob_sha": "57032531e803977a5e663c6a824629c89a14ac0b",
+      "sha256": "2ab20ef520f12270a2fabcda06b7e6c935c8cd4c37c4b703e7d56577e7250c19",
+      "bytes": 157
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/05_dad.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/05_dad.stdout.txt",
+      "git_blob_sha": "daa585b0290148146da24dd74982351b0ccab001",
+      "sha256": "26dd6fc417739ea0343460112d11b3c4f1069a49bbafbd30d156ff5b1b1f1480",
+      "bytes": 93
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/06_after_haproxy.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/06_after_haproxy.stdout.txt",
+      "git_blob_sha": "584c84786d9f1c072767a37bc1ba690769b6e15f",
+      "sha256": "45df5ad5e0ecfa54d3226343e0e6857337494ba6e32f189d1174070665d8c659",
+      "bytes": 7
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/06_after_ip_address.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/06_after_ip_address.stdout.txt",
+      "git_blob_sha": "42825f71b5832d10910c7944b5e23ba8d23a1e1d",
+      "sha256": "6b932073778b78e18633368872e469c5734c1b2fe3658293ac87430e191b1e14",
+      "bytes": 409
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/06_after_ip_link.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/06_after_ip_link.stdout.txt",
+      "git_blob_sha": "8bb195243ce50332321be368324723e250fffb3e",
+      "sha256": "d0b4d5a76169fd1bbaf278360ae49fbbd95c35201a79f19ef79d182499da523f",
+      "bytes": 300
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/06_after_listeners.stderr.txt",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/06_after_listeners.stdout.txt",
+      "git_blob_sha": "7c773966a348a998b867e4441a950157b4fb898c",
+      "sha256": "68e167240d004688c0e462dff8bc4c9ca6271fed8261140e047e2b4b6509735d",
+      "bytes": 240
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/COMMANDS.json",
+      "git_blob_sha": "8e54e78cf87095833a2a9d4424601784036ff05b",
+      "sha256": "c77047686b6bf67c9b10575aa2de6c9237ab5f40ecb8cb3b23bb41c6d4a8f373",
+      "bytes": 7890
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/METADATA.json",
+      "git_blob_sha": "6f79ece550fbfa982db01c1ffd16a27db97eb90f",
+      "sha256": "939daa15f8bbbad35752539f89eb783f85d2c09a3cd8426752359f21dfe15b5a",
+      "bytes": 753
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/RESULT.json",
+      "git_blob_sha": "f288f8fea13960a377af49f8c4b7a95cc30f7309",
+      "sha256": "39f396be65613ce9d3499a5357f870c145c39c7be8635d5a1cff42546d9b2b67",
+      "bytes": 1257
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/SHA256SUMS",
+      "git_blob_sha": "e1daeb8be9fec561dfcc87f47cd7a389517362f6",
+      "sha256": "4403c1f4580721f5d1e57f093aa06d6e4d2eee33940912506a32f9c83f253275",
+      "bytes": 2647
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/TOOLS.json",
+      "git_blob_sha": "fcd4cd336ea6db2209a08ff4602cd7630708b520",
+      "sha256": "131a3f04416a7864295856e45b635f4a85539061c7113d3911eae388978c4c28",
+      "bytes": 1984
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/raw/collector-used.py",
+      "git_blob_sha": "a58408292259624c9984b2709268eebcd256adf7",
+      "sha256": "723f2a58f66cbb91ad5d83f13d4005ebe3e70ea5997811d8933122f898ea021a",
+      "bytes": 15134
+    },
+    {
+      "path": "evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/source/FDS_P1_LB_01_DAD_20260916T150750Z_2q4miky1.tar.gz.sha256",
+      "git_blob_sha": "fb1a7041551b49b1ab09ecc1cef9f3d9e77ce0b1",
+      "sha256": "08d0819c57b92b8a14c6ca9121256a216f2135dd72e01d8cc9dca0259c59b19b",
+      "bytes": 116
+    }
+  ]
+}

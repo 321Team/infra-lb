@@ -1,0 +1,22 @@
+{
+  "kit_version": "1.1",
+  "approval_url": "https://github.com/321Team/fds-project-evidence/issues/4#issuecomment-5699238203",
+  "started": {
+    "utc": "2026-09-16T15:07:50.121092+00:00",
+    "kst": "2026-09-17T00:07:50.121092+09:00"
+  },
+  "hostname": "k8s-api-lb01",
+  "user": "server01_k8s-api-lb",
+  "uid": 1000,
+  "home": "/home/server01_k8s--api-lb",
+  "kernel": [
+    "Linux",
+    "k8s-api-lb01",
+    "6.12.0-266.el10.x86_64",
+    "#1 SMP PREEMPT_DYNAMIC Fri Sep  4 08:02:18 UTC 2026",
+    "x86_64"
+  ],
+  "evidence_directory": "/home/server01_k8s--api-lb/FDS_P1_LB_01_DAD_20260916T150750Z_2q4miky1",
+  "historical_source_gap": "2026-08-31 original remains unavailable; no backdating",
+  "purpose": "current-snapshot supplementary DAD check"
+}

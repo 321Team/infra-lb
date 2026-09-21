@@ -1,5 +1,7 @@
 # P1-LB-01 Stage B 선행 작업 키트 v1.0
 
+후속 검토 위치는 [PR 이관 현황](../PR_MIGRATIONS.md)을 따른다. 아래 원본 PR 링크는 당시 기록을 보존한 참조다.
+
 2026-09-17 소스 편입본. 기존 실행은 [증적 PR15](https://github.com/321Team/fds-project-evidence/pull/15)에서 PRECHECK_NOT_READY(CP1 UP, CP2/3 연결 거절)로 수신·검증했다. 다음 실행은 현재 요청의 필요성과 범위를 확인한 뒤 진행한다.
 
 ## 승인된 다음 회차의 실행 방법

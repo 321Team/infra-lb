@@ -15,4 +15,4 @@
 
 현재 LB가 기다리는 직접 자료는 Kubernetes 측 CP2/3 API 준비 근거, LB 3/3 backend 정상 확인, 인증 API, 단일 backend 장애와 복구 중 API 결과다. CP1 최소 CNI 변경과 실제 인수·후속 노드 준비 흐름은 Kubernetes/ICR에서 관리한다. 이 이관으로 ICR 전체 종결이나 Stage A 전체 재시험을 새 선행 조건으로 추가하지 않는다.
 
-증빙 PR14/15의 리뷰/인수는 evidence에서 진행하고, infra-lb PR은 소스·자료 편입을 검토한다. 코드 PR 병합이 Runtime 인수나 P1-LB-01 종결을 대신하지 않는다.
+증빙 PR14/15의 후속 리뷰·인수 판단은 [이관 현황](PR_MIGRATIONS.md)의 infra-lb PR에서 진행한다. 원래 PR과 이전 인수 회신은 역사 근거로 보존한다. 코드 PR 병합이 Runtime 인수나 P1-LB-01 종결을 대신하지 않는다.

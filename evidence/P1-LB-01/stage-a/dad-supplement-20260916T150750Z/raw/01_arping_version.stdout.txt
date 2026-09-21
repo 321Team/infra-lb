@@ -1,0 +1,2 @@
+arping from iputils 20240905
+libcap: yes, IDN: yes, NLS: yes, error.h: yes, getrandom(): yes, __fpending(): yes

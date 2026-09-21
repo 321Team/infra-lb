@@ -1,0 +1,53 @@
+{
+  "status": "PASS_CURRENT_SNAPSHOT_REVIEW_REQUIRED",
+  "scope": "CURRENT_SNAPSHOT_ONLY",
+  "historical_original_recovered": false,
+  "final_acceptance": "PENDING_REVIEW",
+  "dad_attempted": true,
+  "reasons": [],
+  "before": {
+    "interface": "ens160",
+    "ipv4": "10.1.93.109",
+    "prefixlen": 24,
+    "mac": "00:0c:29:f7:65:94",
+    "haproxy": "active",
+    "listener": "10.1.93.109:6443",
+    "link": "UP"
+  },
+  "l2_peer": {
+    "summary_valid": true,
+    "sent": 1,
+    "received": 1,
+    "reply_macs": [
+      "94:f3:92:6b:a8:40"
+    ],
+    "wrapper_return_code": 0,
+    "arping_return_code": 0
+  },
+  "dad": {
+    "summary_valid": true,
+    "sent": 3,
+    "received": 0,
+    "reply_macs": [],
+    "wrapper_return_code": 0,
+    "arping_return_code": 0
+  },
+  "after": {
+    "interface": "ens160",
+    "ipv4": "10.1.93.109",
+    "prefixlen": 24,
+    "mac": "00:0c:29:f7:65:94",
+    "haproxy": "active",
+    "listener": "10.1.93.109:6443",
+    "link": "UP"
+  },
+  "postcheck": "MATCH",
+  "tool_hash_unavailable": [
+    "sudo"
+  ],
+  "finished": {
+    "utc": "2026-09-16T15:07:53.448882+00:00",
+    "kst": "2026-09-17T00:07:53.448882+09:00"
+  },
+  "approval_url": "https://github.com/321Team/fds-project-evidence/issues/4#issuecomment-5699238203"
+}

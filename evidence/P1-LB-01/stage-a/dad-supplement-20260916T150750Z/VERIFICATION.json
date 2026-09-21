@@ -1,0 +1,112 @@
+{
+  "verified_at_utc": "2026-09-16T15:14:15.342005+00:00",
+  "verification_agent": "Codex receipt analysis, not independent human approval",
+  "archive": {
+    "filename": "FDS_P1_LB_01_DAD_20260916T150750Z_2q4miky1.tar.gz",
+    "size_bytes": 10044,
+    "sha256": "9a8c149d3f0e48a43b6d052c3389b7f01ae9857bf30b03cfd592c16927d850a0",
+    "sidecar_match": true
+  },
+  "internal_manifest": {
+    "matched": 29,
+    "total": 29,
+    "unlisted_files_except_manifest": [],
+    "hashes": {
+      "01_arping_version.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "01_arping_version.stdout.txt": "a39bd98031c01e22d3fb7caf0358e62cebd5438283469d28fb9732eedabbd0d5",
+      "02_before_haproxy.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "02_before_haproxy.stdout.txt": "45df5ad5e0ecfa54d3226343e0e6857337494ba6e32f189d1174070665d8c659",
+      "02_before_ip_address.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "02_before_ip_address.stdout.txt": "6b932073778b78e18633368872e469c5734c1b2fe3658293ac87430e191b1e14",
+      "02_before_ip_link.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "02_before_ip_link.stdout.txt": "d0b4d5a76169fd1bbaf278360ae49fbbd95c35201a79f19ef79d182499da523f",
+      "02_before_listeners.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "02_before_listeners.stdout.txt": "68e167240d004688c0e462dff8bc4c9ca6271fed8261140e047e2b4b6509735d",
+      "03_peer_route.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "03_peer_route.stdout.txt": "45aa403870187953cf223be82cba2080e0803546774a71e5256a2328b90df38f",
+      "04_l2_peer.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "04_l2_peer.stdout.txt": "2ab20ef520f12270a2fabcda06b7e6c935c8cd4c37c4b703e7d56577e7250c19",
+      "05_dad.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "05_dad.stdout.txt": "26dd6fc417739ea0343460112d11b3c4f1069a49bbafbd30d156ff5b1b1f1480",
+      "06_after_haproxy.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "06_after_haproxy.stdout.txt": "45df5ad5e0ecfa54d3226343e0e6857337494ba6e32f189d1174070665d8c659",
+      "06_after_ip_address.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "06_after_ip_address.stdout.txt": "6b932073778b78e18633368872e469c5734c1b2fe3658293ac87430e191b1e14",
+      "06_after_ip_link.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "06_after_ip_link.stdout.txt": "d0b4d5a76169fd1bbaf278360ae49fbbd95c35201a79f19ef79d182499da523f",
+      "06_after_listeners.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "06_after_listeners.stdout.txt": "68e167240d004688c0e462dff8bc4c9ca6271fed8261140e047e2b4b6509735d",
+      "COMMANDS.json": "c77047686b6bf67c9b10575aa2de6c9237ab5f40ecb8cb3b23bb41c6d4a8f373",
+      "METADATA.json": "939daa15f8bbbad35752539f89eb783f85d2c09a3cd8426752359f21dfe15b5a",
+      "RESULT.json": "39f396be65613ce9d3499a5357f870c145c39c7be8635d5a1cff42546d9b2b67",
+      "TOOLS.json": "131a3f04416a7864295856e45b635f4a85539061c7113d3911eae388978c4c28",
+      "collector-used.py": "723f2a58f66cbb91ad5d83f13d4005ebe3e70ea5997811d8933122f898ea021a"
+    }
+  },
+  "collector_matches_delivered_v1_1": true,
+  "recorded_collection": {
+    "start": {
+      "utc": "2026-09-16T15:07:50.121092+00:00",
+      "kst": "2026-09-17T00:07:50.121092+09:00"
+    },
+    "finish": {
+      "utc": "2026-09-16T15:07:53.448882+00:00",
+      "kst": "2026-09-17T00:07:53.448882+09:00"
+    }
+  },
+  "commands": {
+    "count": 12,
+    "all_expected_argv_match": true,
+    "all_rc_zero": true,
+    "all_stderr_empty": true,
+    "timeouts_or_errors": 0,
+    "timestamp_order_and_timezones_match": true
+  },
+  "l2_peer": {
+    "summary_valid": true,
+    "sent": 1,
+    "received": 1,
+    "reply_macs": [
+      "94:f3:92:6b:a8:40"
+    ],
+    "wrapper_return_code": 0,
+    "arping_return_code": 0
+  },
+  "dad": {
+    "summary_valid": true,
+    "sent": 3,
+    "received": 0,
+    "reply_macs": [],
+    "wrapper_return_code": 0,
+    "arping_return_code": 0
+  },
+  "before_after": {
+    "comparison": "four raw stdout files byte-identical",
+    "state": {
+      "interface": "ens160",
+      "ipv4": "10.1.93.109",
+      "prefixlen": 24,
+      "mac": "00:0c:29:f7:65:94",
+      "haproxy": "active",
+      "listener": "10.1.93.109:6443",
+      "link": "UP"
+    }
+  },
+  "tool_metadata": {
+    "hashes_collected": 6,
+    "total_tools": 7,
+    "sudo_hash": "unavailable: permission denied",
+    "sudo_mode": "0o4111",
+    "sudo_invocations_rc_zero": 3
+  },
+  "verdict": "PASS_CURRENT_SNAPSHOT_REVIEW_REQUIRED",
+  "scope": "2026-09-17 00:07:50-53 KST on ens160: no duplicate ARP response observed; no historical recovery or future uniqueness guarantee",
+  "gates": {
+    "runtime": "verified from submitted original logs; not rerun by verifier",
+    "independent_evidence_review": "PENDING",
+    "receiver_acceptance": "PENDING",
+    "merge": "NOT_PERFORMED",
+    "ci": "NOT_RUN_BY_THIS_TASK",
+    "stage_b": "NOT_ESTABLISHED_BY_THIS_EVIDENCE"
+  }
+}

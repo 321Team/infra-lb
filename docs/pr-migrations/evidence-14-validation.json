@@ -1,0 +1,17 @@
+{
+  "scope": "Static PR migration integrity; no live server execution",
+  "source_pr": "https://github.com/321Team/fds-project-evidence/pull/14",
+  "source_head": "f74bda7eac39658c297a4dd5d1c590bd0717bcce",
+  "files_equal_to_source_git_blobs": 34,
+  "sha256_manifests_verified": {
+    "raw": 29
+  },
+  "preserve_original_paths": true,
+  "preserve_original_bytes": true,
+  "original_main_base": "83d13e326c5e320cb5149eebfdbacfd09aa5af9c",
+  "runtime_or_config_changes": false,
+  "review_inherited": false,
+  "runtime_verdict": "PASS_CURRENT_SNAPSHOT_REVIEW_REQUIRED",
+  "acceptance": "PENDING_REVIEW",
+  "stage_b_complete": false
+}

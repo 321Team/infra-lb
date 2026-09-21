@@ -1,6 +1,6 @@
 # LB 자료·증적 통합 목록
 
-소스와 문서는 infra-lb에서 관리하고 실제 명령 출력·승인 이력은 기존 evidence/baseline의 고정 커밋을 참조한다. 파일 개수에는 README·수신 검토·manifest가 포함되므로 실제 시험 횟수가 아니다.
+소스·문서와 이관된 LB 전용 실행 증적은 infra-lb에서 관리한다. 원본 PR·이전 승인 이력은 evidence/baseline의 고정 링크로 보존한다. 현재 검토 위치와 이관 범위는 [PR 이관 현황](PR_MIGRATIONS.md)을 따른다. 파일 개수에는 README·수신 검토·manifest가 포함되므로 실제 시험 횟수가 아니다.
 
 ## 이관한 원본 자료
 
@@ -29,3 +29,8 @@
 - 전체 카카오톡 ZIP·이미지와 실행 tar.gz 원본은 기존 보관본에 남긴다. 이 저장소에는 LB 관련 발췌, 출처, 해시와 Git 증적 링크를 정리했다. 다른 팀원의 원본 보관본 접근까지 확인한 것은 아니다.
 - 노션에 적힌 이전 백업 두 파일 실물, 8/31 DAD 서버 원본, Stage B 인증 API/장애복구 결과는 이번 이관으로 새로 확보하지 않았다.
 - 자료 이관 검증은 [MATERIALS_VALIDATION.json](MATERIALS_VALIDATION.json), 전체 파일 해시는 루트 SHA256SUMS를 따른다.
+
+## 현재 분기에 편입한 실행 원본
+
+- [DAD 원본·수신 검토](../evidence/P1-LB-01/stage-a/dad-supplement-20260916T150750Z/README.md): 원본 PR14의 34개 파일을 byte 그대로 보존.
+- Stage B preflight 52개는 별도 후속 이관 분기에서 검토한다.
