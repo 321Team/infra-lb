@@ -7,6 +7,9 @@ __pycache__/
 /FDS_P1_LB_01_*/
 /evidence/*
 !/evidence/P1-LB-01/
+/evidence/P1-LB-01/*
+!/evidence/P1-LB-01/stage-a/
+!/evidence/P1-LB-01/stage-b/
 /artifacts/
 /local-output/
 *.tar.gz
