@@ -16,8 +16,8 @@ P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기�
 |---|---|---|
 | Stage A | 기존 Technical/Evidence PASS 및 조건부 인수 유지 | evidence PR [#1](https://github.com/321Team/fds-project-evidence/pull/1), [#5](https://github.com/321Team/fds-project-evidence/pull/5) |
 | Firewall Permanent | 9/9 출력 범위 보완; 재부팅 지속성까지 확대하지 않음 | evidence [PR #6](https://github.com/321Team/fds-project-evidence/pull/6) |
-| 현재 DAD | 9/17 00:07 KST 현재 시점 기술 PASS, 최종 해소 리뷰 대기 | evidence [PR #14](https://github.com/321Team/fds-project-evidence/pull/14) |
-| Stage B 사전점검 | 9/17 12:17 KST PRECHECK_NOT_READY: CP1 UP, CP2/3 DOWN·TCP 연결 거절 | evidence [PR #15](https://github.com/321Team/fds-project-evidence/pull/15) |
+| 현재 DAD | 9/17 00:07 KST 현재 시점 기술 PASS. infra-lb로 이관해 독립 리뷰 Approve·main 병합 완료(9/21). **LB-A-01 잔여 인수 조건 해소는 별도이며 아직 미해소** | [PR #2](https://github.com/321Team/infra-lb/pull/2), 원본 evidence [PR #14](https://github.com/321Team/fds-project-evidence/pull/14) |
+| Stage B 사전점검 | 9/17 12:17 KST PRECHECK_NOT_READY: CP1 UP, CP2/3 DOWN·TCP 연결 거절. infra-lb로 이관해 독립 리뷰 Approve·main 병합 완료(9/21). 판정 자체는 변경 없음 | [PR #3](https://github.com/321Team/infra-lb/pull/3), 원본 evidence [PR #15](https://github.com/321Team/fds-project-evidence/pull/15) |
 | 인증 API·단일 backend 장애/복구 | 절차 준비, 실제 시험 미수행 | [API 절차](docs/runbooks/AUTHENTICATED_API.md), [장애/복구 초안](docs/runbooks/FAILOVER.md) |
 
 현재 DAD 재검사는 8/31 역사 원본의 복구를 뜻하지 않는다. BACKEND 집계 UP은 서버 세 대 모두 UP이라는 뜻이 아니다. 새 저장소 편입·코드 병합·로컬 테스트 PASS로 Stage B 완료나 인수를 선언하지 않는다.
