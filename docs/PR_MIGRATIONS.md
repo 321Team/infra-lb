@@ -4,8 +4,8 @@
 
 | 원본 PR / 고정 HEAD | 새 검토 분기 | 이 분기의 편입 범위 |
 |---|---|---|
-| [evidence #14](https://github.com/321Team/fds-project-evidence/pull/14), `f74bda7eac39658c297a4dd5d1c590bd0717bcce` | [DAD 이관](https://github.com/321Team/infra-lb/tree/chore/migrate-evidence-pr14-dad) | 원본 34개 편입, 독립 검토 대기 |
-| [evidence #15](https://github.com/321Team/fds-project-evidence/pull/15), `c6ed08bdd7d54901dffc709fc9fa0d75e961f68b` | [Stage B 이관](https://github.com/321Team/infra-lb/tree/chore/migrate-evidence-pr15-preflight) | 이 분기에 원본 52개 편입, 독립 검토 대기 |
+| [evidence #14](https://github.com/321Team/fds-project-evidence/pull/14), `f74bda7eac39658c297a4dd5d1c590bd0717bcce` | [PR #2](https://github.com/321Team/infra-lb/pull/2) → main 병합 완료(`134dfbd643b143a6d639bbc33b32b7cee2555f7f`) | 원본 34개 편입, 이하영 독립 리뷰 Approve 후 main 병합 |
+| [evidence #15](https://github.com/321Team/fds-project-evidence/pull/15), `c6ed08bdd7d54901dffc709fc9fa0d75e961f68b` | [PR #3](https://github.com/321Team/infra-lb/pull/3) (base main 전환 완료) | 원본 52개 편입, 이하영 독립 리뷰 Approve·base 전환 재확인 완료. 최종 병합 판단 대기 |
 
 각 원본 PR 상단에도 실제 새 PR URL을 기록한다. 원본 종료는 **이관**을 뜻하며 승인·병합·인수 완료가 아니다. 캡처 당시 두 원본 PR의 review submission은 0건이다. 새 HEAD에 대해 독립 리뷰가 필요하다.
 
