@@ -31,6 +31,22 @@ cfg SHA-256은 `afd19086ab8529d621185c231fa3c588eaeeb2025a08445e90f28cf27b00504f
 
 [9/9 Runtime](https://github.com/321Team/fds-project-evidence/blob/90093f88167055f81e8789d2a848f44ead0ee9ce/evidence/P1-LB-01/stage-a/supplement-20260909T072022Z/raw/03_public_runtime.txt)과 [Permanent](https://github.com/321Team/fds-project-evidence/blob/90093f88167055f81e8789d2a848f44ead0ee9ce/evidence/P1-LB-01/stage-a/supplement-20260909T072022Z/raw/04_public_permanent.txt)의 zone은 public, services는 dhcpv6-client·ssh, ports는 공란이다. 6443 zone-wide 개방 없이 8개 rich rule이 일치했다. Runtime interfaces=ens160, Permanent interfaces=공란이므로 전체 설정이 같다고 기록하지 않는다. 재부팅 지속성을 새로 검증한 자료도 아니다.
 
+## LB → GitHub 접근 (infra-lb pull 전용 Deploy Key)
+
+2026-09-22 Lead(이권욱) 결정. LB 서버(`k8s-api-lb01`)에서 Stage B preflight 등 실행 전 검토된 commit의 `infra-lb`를 직접 pull해야 할 필요가 확인됐다. 정본(baseline)에는 이 방향(LB→GitHub) 접근을 위한 별도 키 발급 절차가 없다 — 기존 [Secure Evidence Transfer Control](../archive/stage-a-completion-v1.3/P1-LB-01_Secure_Evidence_Transfer_Control_v1.0.md)은 반대 방향(LB→ansible01/cicd-runner01 증적 전송)의 source별 1회성 키·forced command 절차이며 이 사안과 목적·방향이 다르다.
+
+`docs/GOVERNANCE.md`의 "새 LB 서버 변경은 책임 Lead가 대상·근거·복구 조건을 확인해 결정한다" 원칙에 따라 아래로 결정한다.
+
+| 항목 | 값 |
+|---|---|
+| 방식 | 저장소 Deploy Key, **읽기 전용**(Allow write access 미체크) |
+| 대상 저장소 | `321Team/infra-lb` (이 저장소 한정, 계정 전역 키 아님) |
+| 대상 서버·계정 | `k8s-api-lb01` / `server01_k8s-api-lb` |
+| 목적 | 검토된 commit의 `tools/stage-b/collect_preflight.py` 등 소스 pull. push·branch 생성 등 쓰기 동작 없음 |
+| 수명 | 상시(1회성 아님) — evidence 전송용 source별 1회성 키와는 별개 용도 |
+
+**상태: DECIDED / 등록 준비.** 실제 키 생성과 GitHub 등록은 서버 담당자가 수행하며, 등록 완료 시 fingerprint와 등록일을 이 항목에 추가한다. 이 결정은 LB 서버의 다른 방화벽·서비스 설정을 변경하지 않으며, Stage B preflight 실행 자체를 승인하는 것도 아니다.
+
 ## 현재 후속과 복구 참고
 
 - 사전점검은 [LB_PREFLIGHT](runbooks/LB_PREFLIGHT.md), 인증 API와 failover는 각 runbook 및 미확정 실행 입력을 따른다.
