@@ -232,6 +232,43 @@ class ObserverTests(unittest.TestCase):
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_manual_cleanup_runner_preserves_original_command_history(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            original = [{"name": "original_injection_record", "return_code": 0}]
+            common.atomic(folder / "COMMANDS.json", original)
+            runner = common.RuntimeRunner(folder, {"true": "/usr/bin/true"})
+            runner.run("manual_cleanup_probe", ["true"])
+            saved = common.read(folder / "COMMANDS.json")
+            self.assertEqual(saved[0], original[0])
+            self.assertEqual(saved[1]["name"], "manual_cleanup_probe")
+
+    def test_invalid_existing_ledger_is_preserved_and_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            common.atomic(folder / "COMMANDS.json", {"bad": "ledger"})
+            before = (folder / "COMMANDS.json").read_bytes()
+            with self.assertRaises(base.Stop):
+                common.RuntimeRunner(folder, {})
+            self.assertEqual((folder / "COMMANDS.json").read_bytes(), before)
+
+    def test_malformed_table_list_cannot_be_confirmed_absent(self):
+        for bad in ({}, [], {"nftables": {}}, {"nftables": [{"table": {}}]}, {"nftables": [None]}):
+            with self.subTest(bad=bad), self.assertRaises(base.Stop):
+                injector.table_rows(bad)
+
+    def test_repeated_failed_delete_does_not_double_count_packets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            runner = FakeRunner(folder, "delete_fail")
+            runner.present = True
+            obj = injector.Injector(runner, folder, inputs())
+            obj.attempted = True
+            for _ in range(2):
+                with self.assertRaises(base.Stop):
+                    obj.cleanup()
+            self.assertEqual(obj.drop_packets, 9)
+
     def test_zero_ansible_rc_does_not_mask_missing_archives(self):
         with tempfile.TemporaryDirectory() as tmp:
             self.assertEqual(controller.classify(Path(tmp), inputs(), 0)["status"], "STOP")

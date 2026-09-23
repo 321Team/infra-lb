@@ -1,3 +1,5 @@
+> 2026-09-24 추가: [읽기 전용 잔여 점검](STAGE_B_READINESS_20260924.md)으로 별도 inventory 파일 없이 LB SSH를 확인하고, LB native nft --check 결과를 수집할 수 있다. Runtime v1.0의 수동 cleanup 명령 이력 보존 결함을 수정했으므로 운영 후보는 v1.1이며 검토 SHA도 수정 후 HEAD로 바뀐다.
+
 # P1-LB-01 Stage B Runtime 검토 후보 — 2026-09-24 KST
 
 책임 티켓: [baseline#9](https://github.com/321Team/fds-project-baseline/issues/9). Lead 이권욱. 코드: [infra-lb PR10](https://github.com/321Team/infra-lb/pull/10).
@@ -28,7 +30,7 @@ API 호출은 전수 트래픽이 아니라 제한된 표본이다. 목표2초, 
 
 ## 전달 묶음과 명령
 
-전달명: `FDS_P1_LB_01_StageB_Runtime_Review_20260924_v1.0.zip` 및 같은 이름의 `.zip.sha256`. ZIP에는 정확한 저장소 source, 검증용 시험, 실행 설명, `SOURCE_REVISION`, 내부 `SHA256SUMS`가 있다. 이 문서에 사후 commit SHA를 자체 삽입하지 않으며, ZIP의 `SOURCE_REVISION`과 PR 본문에 결과 SHA를 고정한다.
+전달명: `FDS_P1_LB_01_StageB_Runtime_Review_20260924_v1.1.zip` 및 같은 이름의 `.zip.sha256`. ZIP에는 정확한 저장소 source, 검증용 시험, 실행 설명, `SOURCE_REVISION`, 내부 `SHA256SUMS`가 있다. 이 문서에 사후 commit SHA를 자체 삽입하지 않으며, ZIP의 `SOURCE_REVISION`과 PR 본문에 결과 SHA를 고정한다.
 
 ansible01의 일반 계정에서 ZIP/sidecar를 홈에 둔 경우:
 
@@ -36,9 +38,9 @@ ansible01의 일반 계정에서 ZIP/sidecar를 홈에 둔 경우:
 (
 set -euo pipefail
 cd "$HOME"
-sha256sum -c FDS_P1_LB_01_StageB_Runtime_Review_20260924_v1.0.zip.sha256
-unzip FDS_P1_LB_01_StageB_Runtime_Review_20260924_v1.0.zip
-cd FDS_P1_LB_01_StageB_Runtime_Review_20260924_v1.0
+sha256sum -c FDS_P1_LB_01_StageB_Runtime_Review_20260924_v1.1.zip.sha256
+unzip FDS_P1_LB_01_StageB_Runtime_Review_20260924_v1.1.zip
+cd FDS_P1_LB_01_StageB_Runtime_Review_20260924_v1.1
 sha256sum -c SHA256SUMS
 source "$HOME/.config/ansible/p1-ans-01.env"
 # 아래 경로는 기존 승인된 LB inventory의 실제 경로로 지정한다.

@@ -11,30 +11,14 @@ from collect_preflight import Stop, json_output, require_ok
 from stageb_common import (RuntimeRunner, atomic, binaries, lock, read, require_lease,
                           state, validate_inputs)
 
-PREFIX = "p1lb_"
+from stageb_rules import PREFIX, table_name, rules, table_rows
 BASELINE_SECONDS = 30
 FAULT_SECONDS = 60
 RECOVERY_SECONDS = 30
 
 
-def table_name(run_id):
-    if not re.fullmatch(r"[0-9a-f]{32}", run_id):
-        raise Stop("INVALID_RUN_ID")
-    return PREFIX + run_id
-
-
-def rules(run_id):
-    name = table_name(run_id)
-    return ('create table inet ' + name + ' { comment "P1-LB-01:' + run_id + '"; }\n'
-            'add set inet ' + name + ' target { type ipv4_addr; flags timeout; timeout 60s; }\n'
-            'add element inet ' + name + ' target { 10.1.93.104 timeout 60s }\n'
-            'add chain inet ' + name + ' output { type filter hook output priority 0; policy accept; }\n'
-            'add rule inet ' + name + ' output oifname "ens160" ip saddr 10.1.93.109 '
-            'ip daddr @target tcp dport 6443 counter drop\n').encode("ascii")
-
-
 def check_tables(data, allowed=None):
-    tables = [x["table"] for x in data.get("nftables", []) if "table" in x]
+    tables = table_rows(data)
     if not any(t.get("family") == "inet" and t.get("name") == "firewalld" for t in tables):
         raise Stop("EXPECTED_FIREWALLD_TABLE_MISSING")
     if any(t.get("name", "").startswith(PREFIX) and t["name"] != allowed for t in tables):
@@ -75,7 +59,9 @@ class Injector:
         return self.r.run("runtime_%04d_%s" % (self.counter, suffix), args, privileged, input_bytes)
 
     def tables(self):
-        return json_output(self.command("tables", ["nft", "-j", "list", "tables"]))
+        result = json_output(self.command("tables", ["nft", "-j", "list", "tables"]))
+        table_rows(result)
+        return result
 
     def cleanup(self):
         """Only this run's marked table; no broad flush or firewalld modification."""
@@ -90,10 +76,13 @@ class Injector:
             entries = [x["table"] for x in own.get("nftables", []) if "table" in x]
             if len(entries) != 1 or entries[0].get("comment") != "P1-LB-01:" + self.data["run_id"]:
                 raise Stop("REFUSE_DELETE_TABLE_WITHOUT_MATCHING_RUN_MARKER")
+            packets = 0
             for obj in own.get("nftables", []):
                 for expr in obj.get("rule", {}).get("expr", []):
                     if "counter" in expr:
-                        self.drop_packets += expr["counter"].get("packets", 0)
+                        packets += expr["counter"].get("packets", 0)
+            # A failed deletion may cause a second read of the same cumulative counter.
+            self.drop_packets = max(self.drop_packets, packets)
             require_ok(self.command("delete_own_table", ["nft", "delete", "table", "inet", self.name]))
         remaining = self.tables()
         if any(x.get("table", {}).get("name") == self.name for x in remaining.get("nftables", [])):

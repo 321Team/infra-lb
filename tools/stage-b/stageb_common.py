@@ -98,7 +98,7 @@ def binaries(names):
 
 def source_files():
     return ["collect_preflight.py", "collect_api_precheck.py", "stageb_common.py",
-            "stageb_observer.py", "stageb_injector.py", "stageb_agent.py"]
+            "stageb_observer.py", "stageb_injector.py", "stageb_agent.py", "stageb_rules.py"]
 
 
 def preserve_source(folder, data):
@@ -161,6 +161,12 @@ class RuntimeRunner:
     """Shorter LB command bounds; no shell. Every command gets an original output pair."""
     def __init__(self, folder, tools, seconds=2):
         self.folder, self.tools, self.seconds, self.records = folder, tools, seconds, []
+        ledger = self.folder / "COMMANDS.json"
+        if ledger.exists():
+            previous = read(ledger)
+            if not isinstance(previous, list) or not all(isinstance(x, dict) and isinstance(x.get("name"), str) for x in previous):
+                raise Stop("INVALID_EXISTING_COMMAND_LEDGER")
+            self.records = previous
 
     def run(self, name, args, privileged=False, input_bytes=None):
         command = [self.tools[args[0]], *args[1:]]

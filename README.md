@@ -1,3 +1,5 @@
+> 실행 전 현재 단계: [LB SSH·nft 읽기 전용 잔여 점검](docs/runbooks/STAGE_B_READINESS_20260924.md). Runtime v1.0은 수정 v1.1로 대체하며, 운영 주입은 아직 NOT_RUN이다.
+
 > P1-LB-01 최신 후보: [Stage B Runtime 실행·복구 안내](docs/runbooks/STAGE_B_RUNTIME_20260924.md). 주입 코드를 포함한 PR10은 코드/혼합 PR이며 운영 실행 전 exact SHA 독립 리뷰가 필요하다. Runtime은 아직 NOT_RUN이다.
 
 # infra-lb
