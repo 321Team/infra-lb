@@ -8,6 +8,10 @@ P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기�
 
 [LB 자료·증적 통합 목록](docs/EVIDENCE_INDEX.md)에서 Stage A 구축 가이드 v1.5, 완료 팩 v1.3, 과거 export/보완 소스, 노션 작업 원본과 대화 발췌를 확인한다. [운영 기준](docs/OPERATIONS_BASELINE.md)과 [Stage A 인계 근거](docs/STAGE_A_HANDOFF.md)에 당시 기록과 후속 판정을 구분했다. `archive/`는 원본 보존용이며 현재 서버 재적용 패키지가 아니다.
 
+## 현장 실행 준비 v1.1 — 2026-09-24 KST
+
+`tools/stage-b/collect_lb_injection_context.py --run`으로 기존 LB backend 점검과 방화벽 관리·송신 경로 정보를 한 번에 수집한다. [실행 절차](docs/runbooks/STAGE_B_FOLLOWUP_20260924.md)를 따른다. 원본 preflight와 control01 인증 API 수집기는 변경 없다. 수집 완료는 장애 주입 허가·준비 완료·Stage B PASS가 아니다. 실제 주입 기능은 포함하지 않는다.
+
 ## 후속 착수 — 2026-09-24 KST
 
 [현재 후속 절차](docs/runbooks/STAGE_B_FOLLOWUP_20260924.md)를 따른다. [기준선 이슈9](https://github.com/321Team/fds-project-baseline/issues/9)의 9/23 대조 결과는 9/18 backend 3/3 및 9/21 LB API 회복을 확인한다. 아래 9/17 CP2/3 DOWN은 과거 관측이며 현재 장애가 아니다. PR2/3의 독립 승인·병합은 완료됐고, 실제 잔여는 장애 자동탐지 중 인증 API 연속성·복구, 지속성, 최종 Handoff다.

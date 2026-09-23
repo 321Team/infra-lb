@@ -1,4 +1,4 @@
-# P1-LB-01 후속 실행 절차 v1.0 — LB 주입 위치 보완1
+# P1-LB-01 후속 실행 절차 v1.1 — LB backend·방화벽 통합 수집
 
 기준일: 2026-09-24 KST. 책임 Lead: 이권욱. 현행 소스 기준: `infra-lb` main `41b33b138d5e8a1dce3d4b2d9a3d7ed30afd72ed`. 이 문서와 추가 수집기는 후속 작업 후보이며, 현재 서버 실행 결과가 아니다.
 
@@ -18,18 +18,18 @@
 
 ### LB — `k8s-api-lb01 / 10.1.93.109`
 
-계정 기록: `server01_k8s-api-lb`, passwd home `/home/server01_k8s--api-lb`. 수집기가 실제 home을 조회한다. 기존 `collect_preflight.py`는 바이트 변경 없이 재사용한다.
+계정 기록: `server01_k8s-api-lb`, passwd home `/home/server01_k8s--api-lb`. 수집기가 실제 home을 조회한다. v1.1의 `collect_lb_injection_context.py`가 기존 `collect_preflight.py`의 점검 함수를 변경 없이 호출하고, LB firewalld/nftables 서비스 상태·nft ruleset·Runtime/Permanent zone 조회·CP3대 송신 경로·boot ID를 같은 묶음에 추가한다. 이 명령을 실행하면 기존 LB 명령을 별도로 반복할 필요가 없다.
 
 ```bash
 (
 set -euo pipefail
 sha256sum -c SHA256SUMS
 sudo -v
-python3 tools/stage-b/collect_preflight.py --run
+python3 tools/stage-b/collect_lb_injection_context.py --run
 )
 ```
 
-기대 결과는 `PRECHECK_READY`/rc0, backend 3대 각각 UP/L4OK, `.109` 출발 CP3대 TCP 성공, 설정·PID·서비스 전후 일치다. STOP/NOT_READY/INCOMPLETE(rc2)도 그대로 제출한다. 이미 통과한 Stage A 전체 검사가 아니라 장애 시험 직전의 시점 확인이다. Python 3.8+와 기존 도구가 필요하며 부족한 패키지·권한을 자동 설치/변경하지 않는다.
+기대 결과는 `PREPARATION_DATA_COLLECTED`/rc0이다. 내부 `lb_preflight.status=PRECHECK_READY`, backend 3대 각각 UP/L4OK, `.109` 출발 CP3대 TCP 성공, 설정·PID·서비스 전후 일치와 추가 방화벽 자료 수집을 뜻한다. **장애 주입 준비 완료 판정은 아니며 `injection_ready=NOT_EVALUATED`를 유지한다.** `PREPARATION_INCOMPLETE` 또는 STOP(rc2)도 그대로 제출한다. 방화벽 도구/권한이 없거나 firewalld 비활성이면 변경 없이 미완전으로 남긴다. 이미 통과한 Stage A 전체 검사가 아니라 장애 시험 직전의 시점 확인이다. Python 3.8+와 기존 도구가 필요하며 부족한 패키지·권한을 자동 설치/변경하지 않는다.
 
 ### API Source — `k8s-control01 / 10.1.93.102`
 
@@ -72,7 +72,7 @@ control01은 기존 허용 경로에서 인증 API를 읽는 **관측자**로만
 | 중단 | 첫 API 실패·대상 외 backend 저하·관리 경로 불안정·최대60초 또는 작업창 초과 시 즉시 복구. 실제 기준은 실행 입력에 사전 고정. |
 | 복구 | 이번 시험이 만든 임시 객체만 삭제하고 3UP/L4OK·API 정상·잔존 변경 없음 확인. 자동 만료/회수 장치와 수동 복구의 실효성을 주입 전에 검증. 광역 flush·방화벽 정지·etcd 조작 금지. |
 
-정확한 주입/복구 명령은 **현재 LB 방화벽 상태 및 관리 경로 확인 전에는 실행 가능한 것으로 배포하지 않는다.** 기존 preflight는 이 방화벽 세부 정보를 수집하지 않는다. 후속 입력은 LB의 firewalld/nft 관리 주체와 현재 송신 규칙, `.104` 경로·출발지, 콘솔/OOB 접근, 임시 규칙의 최대 존속시간 및 원복 결과 확인 방법이다. CP 정책 재설계·정지나 CP 주입 가능성 확인은 요청하지 않는다. 고정되지 않은 대상·작업창·OOB·주입/복구 명령은 [기존 입력 양식](../../templates/EXECUTION_INPUTS.json)에 미확정으로 유지했다. 이번 API 수집기는 그 양식을 소비하거나 자동 장애 시험을 시작하지 않는다. 사전점검 결과를 받으면 현재 출력에 맞는 최소 변경과 역연산을 준비하고 해당 SHA의 리뷰/Lead 실행 판단을 연결한다.
+정확한 주입/복구 명령은 **현재 LB 방화벽 상태 및 관리 경로 확인 전에는 실행 가능한 것으로 배포하지 않는다.** v1.1은 기존 preflight에 빠졌던 방화벽 세부 정보를 함께 수집한다. 수신 자료에서 LB의 firewalld/nft 관리 주체와 현재 송신 규칙, `.104` 경로·출발지를 판독한다. 콘솔/OOB 실제 접근, 작업창, 임시 규칙의 최대 존속시간과 정확한 회수 명령은 별도 실행 입력으로 고정해야 한다. CP 정책 재설계·정지나 CP 주입 가능성 확인은 요청하지 않는다. 고정되지 않은 대상·작업창·OOB·주입/복구 명령은 [기존 입력 양식](../../templates/EXECUTION_INPUTS.json)에 미확정으로 유지했다. 이번 API 수집기는 그 양식을 소비하거나 자동 장애 시험을 시작하지 않는다. 사전점검 결과를 받으면 현재 출력에 맞는 최소 변경과 역연산을 준비하고 해당 SHA의 리뷰/Lead 실행 판단을 연결한다.
 
 ## 3. 지속성과 최종 인수
 
@@ -91,3 +91,11 @@ control01은 기존 허용 경로에서 인증 API를 읽는 **관측자**로만
 - PUBLICATION: 실행용 파일 전달과 정본 Release 발행은 별개다. 정본 발행 없음.
 
 명령 근거: [kubectl auth whoami](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_auth/kubectl_auth_whoami/), [kubectl get](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/), [HAProxy 3.0 관리 문서](https://www.haproxy.org/download/3.0/doc/management.txt). 클라이언트 실제 버전의 호환성은 현장 점검 결과로 확인한다.
+
+## v1.1 변경과 조회 범위
+
+- 신규 명령은 boot ID 읽기, `systemctl show`, `ip route get`, `nft --version` 및 `nft -j -a list ruleset`, `firewall-cmd`의 version/state/zone 조회뿐이다. `--permanent --list-all-zones`는 Permanent 설정 조회이며 쓰기 명령이 아니다.
+- CP 직접 주입, nft add/delete/flush, firewall reload/start/stop, 서비스·계정·권한 변경 코드는 없다. 수집 raw ruleset은 검토 자료이며 복구/배포 입력으로 자동 소비하지 않는다.
+- 기존 LB preflight·API 수집기는 바이트 변경 없다. 신규 수집기와 8개 시험을 추가했고 전체 38개 로컬 시험 PASS. 현장 sudo·nft/firewalld 호환성과 실제 출력은 미검증이다.
+- 첫 오류 후 모든 조회를 PASS로 뭉개지 않는다. backend 미준비와 방화벽 수집 오류를 분리하고 각 명령 rc/stdout/stderr/시각을 보존한다. 잘못된 host 또는 기존 LB preflight STOP이면 추가 방화벽 조회를 하지 않는다.
+- 명령 근거: [nft 공식 매뉴얼](https://netfilter.org/projects/nftables/manpage.html), [firewall-cmd 공식 매뉴얼](https://firewalld.org/documentation/man-pages/firewall-cmd.html).
