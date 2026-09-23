@@ -13,7 +13,7 @@ import tempfile
 
 from collect_preflight import Runner, Stop, TRUSTED_PATH, json_output, require_ok, sha, stamp, write_json
 
-VERSION = "1.0"
+VERSION = "1.1"
 HOST = "k8s-control01"
 SOURCE = "10.1.93.102"
 ENDPOINT = "https://10.1.93.109:6443"
@@ -22,14 +22,15 @@ CONTEXT = "kubernetes-admin@kubernetes"
 NODES = {"k8s-control01", "k8s-control02", "k8s-control03",
          "k8s-worker01", "k8s-worker02", "k8s-worker03"}
 # Emit only boolean flags. Never emit kubeconfig, credentials, proxy URL or exec arguments.
+# Raw strings preserve Go string escapes; Python must not insert a literal newline inside {{"..."}}.
 CONFIG_TEMPLATE = ('{{range .clusters}}'
-    '{{if index .cluster "proxy-url"}}proxy=yes{{else}}proxy=no{{end}}{{"\n"}}'
-    '{{if index .cluster "insecure-skip-tls-verify"}}insecure=yes{{else}}insecure=no{{end}}{{"\n"}}'
-    '{{if or (index .cluster "certificate-authority") (index .cluster "certificate-authority-data")}}ca=yes{{else}}ca=no{{end}}{{"\n"}}'
+    r'{{if index .cluster "proxy-url"}}proxy=yes{{else}}proxy=no{{end}}{{"\n"}}'
+    r'{{if index .cluster "insecure-skip-tls-verify"}}insecure=yes{{else}}insecure=no{{end}}{{"\n"}}'
+    r'{{if or (index .cluster "certificate-authority") (index .cluster "certificate-authority-data")}}ca=yes{{else}}ca=no{{end}}{{"\n"}}'
     '{{end}}{{range .users}}'
-    '{{if .user.exec}}exec=yes{{else}}exec=no{{end}}{{"\n"}}'
-    '{{if index .user "auth-provider"}}provider=yes{{else}}provider=no{{end}}{{"\n"}}'
-    '{{if or (index .user "as") (index .user "as-uid") (index .user "as-groups") (index .user "as-user-extra")}}impersonation=yes{{else}}impersonation=no{{end}}{{"\n"}}'
+    r'{{if .user.exec}}exec=yes{{else}}exec=no{{end}}{{"\n"}}'
+    r'{{if index .user "auth-provider"}}provider=yes{{else}}provider=no{{end}}{{"\n"}}'
+    r'{{if or (index .user "as") (index .user "as-uid") (index .user "as-groups") (index .user "as-user-extra")}}impersonation=yes{{else}}impersonation=no{{end}}{{"\n"}}'
     '{{end}}')
 EXPECTED_FLAGS = ["proxy=no", "insecure=no", "ca=yes", "exec=no", "provider=no", "impersonation=no"]
 

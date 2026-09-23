@@ -1,5 +1,18 @@
 # P1-LB-01 후속 실행 절차 v1.1 — LB backend·방화벽 통합 수집
 
+## 2026-09-24 05:32 KST 현장 수신 및 API 수집기 수정
+
+- LB 05:10 KST 원본은 backend3UP/L4OK·CP3대 TCP 성공·방화벽 context 수집 PASS다. 기존 자료를 재사용한다.
+- ansible01 → control01(svc_ansible)의 원격 실행·실패 증적 회수는 실제 성공했다. 외부 manifest8개 및 CP manifest10개와 전달 source 사본이 일치했다.
+- CP 수집은 `02_config_flags`에서 STOP/rc2. 원본 stderr는 `template: output:1: unterminated quoted string`이고 `kubectl` rc1이다. 이번 실패 원인은 sudo 거절이 아니라 Python 문자열의 `\n`이 Go-template 인용 문자열 안의 실제 줄바꿈으로 변환된 수집기 결함이다.
+- whoami·NodeList·readyz는 아직 실행되지 않았다. Ansible rc0/failed0은 실패 결과의 정상 회수를 뜻하며 API PASS가 아니다.
+- API 수집기 v1.1에서 raw 문자열로 Go-template escape를 보존했다. 조회 범위·TLS·identity·권한·helper는 유지한다. 기존 모의시험이 실제 template parser를 실행하지 않아 이 결함을 놓쳤으므로 native kubectl 회귀시험을 추가했다.
+- 로컬 kubectl v1.34.1(공식 SHA256 검증)으로 구버전 오류를 재현하고 수정본6개 flag 및 보안 설정9개 변형을 검증했다. 전체41 tests PASS(기존38+native3), 실제 대상 kubectl 버전/인증 API는 아직 미검증이다.
+- 수정 후 재수집은 `FDS_P1_LB_01_Ansible_API_Precheck_20260924_v1.1.zip`과 외부 `.sha256`의 절차를 따른다. 기존 계정·권한을 유지하고 source 폴더만 새로 만든다. LB 재수집, sudoers 변경, CP/Calico 변경은 요구하지 않는다.
+- 원본 archive: `FDS_P1_LB_01_ANSIBLE_API_20260923T203254Z_y_7snk8n.tar.gz`, SHA256 `c58d690cba3ed809e5dc7f060a4be7ad0cba0cfc5a38d977b6db1a3bb7aec062`. 원본은 사용자 제출본으로 보존하며 이 문서 수정으로 과거 실패를 PASS로 바꾸지 않는다.
+- 아래 v1.1 실행안의 '미실행/미확인'은 작성 당시 기록이다. 현재 확인된 단계는 위 수신 결과이며 장애 주입·Stage B·복구·지속성·최종 인수는 여전히 미완료다.
+
+
 기준일: 2026-09-24 KST. 책임 Lead: 이권욱. 현행 소스 기준: `infra-lb` main `41b33b138d5e8a1dce3d4b2d9a3d7ed30afd72ed`. 이 문서와 추가 수집기는 후속 작업 후보이며, 현재 서버 실행 결과가 아니다.
 
 ## 현재 판단과 재사용 범위
