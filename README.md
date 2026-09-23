@@ -8,6 +8,12 @@ P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기�
 
 [LB 자료·증적 통합 목록](docs/EVIDENCE_INDEX.md)에서 Stage A 구축 가이드 v1.5, 완료 팩 v1.3, 과거 export/보완 소스, 노션 작업 원본과 대화 발췌를 확인한다. [운영 기준](docs/OPERATIONS_BASELINE.md)과 [Stage A 인계 근거](docs/STAGE_A_HANDOFF.md)에 당시 기록과 후속 판정을 구분했다. `archive/`는 원본 보존용이며 현재 서버 재적용 패키지가 아니다.
 
+## 후속 착수 — 2026-09-24 KST
+
+[현재 후속 절차](docs/runbooks/STAGE_B_FOLLOWUP_20260924.md)를 따른다. [기준선 이슈9](https://github.com/321Team/fds-project-baseline/issues/9)의 9/23 대조 결과는 9/18 backend 3/3 및 9/21 LB API 회복을 확인한다. 아래 9/17 CP2/3 DOWN은 과거 관측이며 현재 장애가 아니다. PR2/3의 독립 승인·병합은 완료됐고, 실제 잔여는 장애 자동탐지 중 인증 API 연속성·복구, 지속성, 최종 Handoff다.
+
+이번 착수에서는 기존 LB 수집기를 그대로 재사용하고 `tools/stage-b/collect_api_precheck.py`에 control01의 제한된 인증 API 사전점검을 추가한다. 두 결과는 시점별 준비 상태이며 Stage B 인수 결과가 아니다. 서버 실행 결과는 아직 수신하지 않았다. GitHub 직접 pull 권한 준비를 이 점검의 선행조건으로 추가하지 않는다.
+
 ## 현재 범위와 상태
 
 2026-09-17 편입 시점의 확인 결과다. 실시간 상태를 의미하지 않는다.

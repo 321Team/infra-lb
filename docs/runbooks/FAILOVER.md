@@ -6,7 +6,7 @@
 
 [EXECUTION_INPUTS.json](../../templates/EXECUTION_INPUTS.json)에 담당자/복구자, 작업창, CP 인수 근거, CP 세 대 준비 근거, 인증 API 기준 결과, 정확히 한 대상 CP, 주입·복구 명령, 관리 경로, 최대 장애 유지시간, 관측 주기, 성공/실패 기준, 승인 기록 URL을 채운다. 공란이 있으면 HOLD다. 작성만으로 승인되지 않는다.
 
-Kubernetes 현재 우선순위는 CP1 최소 규칙 수정 → 기존5흐름 재검사 → CP1 실제 인수 → 후속 노드 준비다. 이 절차를 CP1 인수의 새 공통 선행 조건으로 추가하지 않는다. CP2/3 준비와 3CP 기반 API 연속성 시험은 후속 단계다.
+2026-09-24 갱신: 9/18 backend 3/3·9/21 API 복구 증거는 이슈9에서 확인했다. 기존 CP1 선행 작업·CP2/3 미준비 설명은 당시 이력이다. 현재 3/3 및 인증 API 기준 결과를 시험 직전에 확인하며, 전체 ICR 종결·Join 반복·Stage A 재시험을 새 선행조건으로 추가하지 않는다. 구체적인 다음 회차와 아직 미확정인 입력은 [후속 절차](STAGE_B_FOLLOWUP_20260924.md)를 따른다.
 
 ## 제안 시험 범위
 
@@ -39,6 +39,6 @@ HAProxy Runtime API의 MAINT/disable로 backend만 제외하는 방식을 고르
 
 ## 제출과 승인
 
-LB/source/대상CP의 시간 상관관계, 원본 명령 rc·출력, 수집 도구 버전, 내부 manifest, 묶음 hash와 원상복구 결과를 제출한다. 우리가 무결성·요건 대조 후 증적 PR을 준비한다. 기술 검토 PASS, 이하영 인수 승인, 이권욱 최종 판단, main 병합은 각각 기록한다.
+LB/source/대상CP의 시간 상관관계, 원본 명령 rc·출력, 수집 도구 버전, 내부 manifest, 묶음 hash와 원상복구 결과를 제출한다. 우리가 무결성·요건 대조 후 증적 PR을 준비한다. 기술 검토, 독립 코드 리뷰가 필요한 변경의 승인, 이권욱 Lead의 결과 수용·최종 인수, main 병합을 각각 기록한다. 사람 간 승인 절차는 [현행 GOVERNANCE](../GOVERNANCE.md)를 우선하며 동일 코드의 실행·결과 수용마다 Support의 별도 승인을 새로 요구하지 않는다. 기존 이하영의 과거 조건부 인수 기록은 보존한다.
 
 참조: [P1-LB-01 이슈9](https://github.com/321Team/fds-project-baseline/issues/9), [P1-K8S-01 이슈10](https://github.com/321Team/fds-project-baseline/issues/10), [Kubernetes PR13 범위 보류](https://github.com/321Team/infra-kubernetes/pull/13).

@@ -2,6 +2,12 @@
 
 상태: 절차 준비. 실제 인증/API 요청 미수행. 시작 시 [EXECUTION_INPUTS.json](../../templates/EXECUTION_INPUTS.json)의 해당 입력과 현재 CP 준비 상태를 확인한다.
 
+## 2026-09-24 후속의 실행 경로
+
+이번에는 이미 IF-11A 허용 Source이며 기존 `/etc/kubernetes/admin.conf` 사용 이력이 있는 control01 `.102`를 점검 Source로 선택한다. Runner에 자격증명을 신규 배포하지 않는다. 일반 로그인 계정에서 `sudo -v` 후 [후속 절차](STAGE_B_FOLLOWUP_20260924.md)의 수집기를 실행한다. 기존 승인 계정·권한과 예상 identity가 맞지 않으면 중단한다. 이 사전점검으로 장애 구간의 API 연속성을 판정하지 않는다.
+
+수집기는 정해진 host/source/context, proxy·TLS·인증 helper/impersonation 유무를 확인하고 `whoami`, 제한된 NodeList GET, readyz를 각 1회만 실행한다. 비익명 identity 일치와 Node 6대 Ready를 분리해 기록하며 실패·timeout·권한 부족은 STOP으로 남긴다. Go-template의 boolean 출력만 저장하므로 kubeconfig·토큰·개인키·proxy URL·exec 인자를 수집하지 않는다. 공개 discovery cache가 생기면 실행 결과 디렉터리에만 남고 제출 archive에서는 제외한다.
+
 ## 시작 조건
 
 1. 허용 source는 우선 Runner `10.250.10.20/32`. 대체 source는 승인된 Node 6대 중 한 대로 명시한다. `ansible01 10.250.10.10`은 기존 Negative 대상이므로 Positive 시험 source로 쓰지 않는다.
