@@ -1,0 +1,218 @@
+---
+- name: Verify both existing remote identities before staging
+  hosts: k8s-control01:k8s-api-lb01
+  gather_facts: false
+  become: false
+  any_errors_fatal: true
+  tasks:
+    - name: Require exactly the approved pair and existing accounts
+      ansible.builtin.assert:
+        that:
+          - ansible_play_hosts_all | sort == ['k8s-api-lb01', 'k8s-control01']
+          - not ansible_check_mode
+          - not (ansible_become | default(false) | bool)
+          - ansible_host == ('10.1.93.102' if inventory_hostname == 'k8s-control01' else '10.1.93.109')
+          - ansible_user == ('svc_ansible' if inventory_hostname == 'k8s-control01' else inputs.lb_user)
+      tags: [access]
+
+    - name: Read actual remote host and ordinary login home
+      ansible.builtin.command:
+        argv:
+          - /usr/bin/python3
+          - -c
+          - |
+            import json,os,pwd,socket
+            p=pwd.getpwuid(os.getuid())
+            print(json.dumps(dict(host=socket.gethostname().split('.')[0],user=p.pw_name,
+              uid=os.getuid(),euid=os.geteuid(),home=os.path.realpath(p.pw_dir),
+              home_uid=os.stat(p.pw_dir).st_uid)))
+      register: login_result
+      changed_when: false
+      tags: [access]
+
+    - name: Parse remote identity
+      ansible.builtin.set_fact:
+        login: "{{ login_result.stdout | from_json }}"
+        role: "{{ 'cp' if inventory_hostname == 'k8s-control01' else 'lb' }}"
+      tags: [access]
+
+    - name: Reject identity mismatch before creating any runtime folder
+      ansible.builtin.assert:
+        that:
+          - login.host == inventory_hostname
+          - login.user == ansible_user
+          - login.uid | int > 0
+          - login.euid | int == login.uid | int
+          - login.home_uid | int == login.uid | int
+          - login.home.startswith('/') and login.home != '/'
+      tags: [access]
+
+    - name: Stage into a new private work directory
+      ansible.builtin.tempfile:
+        state: directory
+        path: "{{ login.home }}"
+        prefix: P1_LB_STAGEB_SOURCE_
+      register: staging
+
+    - name: Copy the exact source set
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../{{ item }}"
+        dest: "{{ staging.path }}/{{ item }}"
+        mode: '0600'
+      loop: "{{ inputs.source_hashes.keys() | list }}"
+
+    - name: Copy nonsecret execution inputs
+      ansible.builtin.copy:
+        content: "{{ inputs | to_nice_json }}\n"
+        dest: "{{ staging.path }}/inputs.json"
+        mode: '0600'
+
+    - name: Build fixed argv prefix
+      ansible.builtin.set_fact:
+        agent: "{{ ['/usr/bin/python3', staging.path + '/stageb_agent.py'] }}"
+        agent_args: "{{ ['--role', role, '--inputs', staging.path + '/inputs.json'] }}"
+
+    - name: Verify source hashes and create a fresh run folder
+      ansible.builtin.command:
+        argv: "{{ agent + ['prepare'] + agent_args }}"
+      environment:
+        PYTHONDONTWRITEBYTECODE: '1'
+      changed_when: true
+
+    - name: Record remote work locations on controller
+      ansible.builtin.copy:
+        content: "{{ {'login': login, 'source': staging.path, 'run': login.home + '/P1_LB_STAGEB_' + inputs.run_id} | to_nice_json }}\n"
+        dest: "{{ evidence_dir }}/{{ role }}_LOCATION.json"
+        mode: '0600'
+      delegate_to: localhost
+
+- name: Coordinate finite API observation and LB fault
+  hosts: k8s-control01
+  gather_facts: false
+  become: false
+  vars:
+    lb: "{{ hostvars['k8s-api-lb01'] }}"
+    lb_done: false
+    previous_sequence: 0
+    orchestration_error: false
+  tasks:
+    - name: Run and preserve failure evidence
+      block:
+        - name: Start finite CP observer under the ordinary account
+          ansible.builtin.command:
+            argv: "{{ agent + ['observe'] + agent_args }}"
+          environment:
+            PYTHONDONTWRITEBYTECODE: '1'
+          async: 300
+          poll: 0
+          register: cp_job
+
+        - name: Wait for a real first API success or explicit STOP
+          ansible.builtin.command:
+            argv: "{{ agent + ['status'] + agent_args }}"
+          register: first_cp
+          changed_when: false
+          until: (first_cp.stdout | from_json).status != 'PREPARED'
+          retries: 40
+          delay: 1
+
+        - name: Require observing state before starting LB supervisor
+          ansible.builtin.assert:
+            that:
+              - (first_cp.stdout | from_json).status == 'OBSERVING'
+              - (first_cp.stdout | from_json).age_seconds | float <= 7
+
+        - name: Start finite LB supervisor with no initial lease
+          ansible.builtin.command:
+            argv: "{{ lb.agent + ['inject'] + lb.agent_args }}"
+          environment:
+            PYTHONDONTWRITEBYTECODE: '1'
+          delegate_to: k8s-api-lb01
+          async: 330
+          poll: 0
+          register: lb_job
+
+        - name: Relay only new fresh successful API observations
+          ansible.builtin.include_tasks: poll.yml
+          loop: "{{ range(0, 140) | list }}"
+          loop_control:
+            loop_var: poll_number
+          when: not (lb_done | bool)
+
+        - name: Require completed LB candidate outcome
+          ansible.builtin.assert:
+            that:
+              - lb_done | bool
+              - lb_state.status == 'PASS_CANDIDATE'
+      rescue:
+        - name: Preserve orchestration failure
+          ansible.builtin.set_fact:
+            orchestration_error: true
+        - name: Request LB cleanup immediately on observed failure
+          ansible.builtin.command:
+            argv: "{{ lb.agent + ['abort'] + lb.agent_args }}"
+          delegate_to: k8s-api-lb01
+          failed_when: false
+          ignore_unreachable: true
+      always:
+        - name: Wait for LB bounded cleanup and final evidence
+          ansible.builtin.async_status:
+            jid: "{{ lb_job.ansible_job_id }}"
+          delegate_to: k8s-api-lb01
+          register: lb_finished
+          until: lb_finished.finished | default(false) | bool
+          retries: 90
+          delay: 1
+          failed_when: false
+          ignore_errors: true
+          ignore_unreachable: true
+          when: lb_job is defined and lb_job.ansible_job_id is defined
+
+        - name: Read final CP outcome before asking the observer to stop
+          ansible.builtin.command:
+            argv: "{{ agent + ['status'] + agent_args }}"
+          register: final_cp
+          changed_when: false
+          failed_when: false
+          ignore_unreachable: true
+
+        - name: Request finite CP observation to stop
+          ansible.builtin.command:
+            argv: "{{ agent + ['stop'] + agent_args }}"
+          failed_when: false
+          ignore_unreachable: true
+
+        - name: Wait for observer output to close
+          ansible.builtin.async_status:
+            jid: "{{ cp_job.ansible_job_id }}"
+          register: cp_finished
+          until: cp_finished.finished | default(false) | bool
+          retries: 20
+          delay: 1
+          failed_when: false
+          ignore_errors: true
+          ignore_unreachable: true
+          when: cp_job is defined and cp_job.ansible_job_id is defined
+
+        - name: Preserve final controller state without interpreting Ansible rc as PASS
+          ansible.builtin.copy:
+            content: "{{ {'orchestration_error': orchestration_error, 'lb_state': lb_state | default({}), 'final_cp': final_cp | default({}), 'lb_job': lb_finished | default({}), 'cp_job': cp_finished | default({})} | to_nice_json }}\n"
+            dest: "{{ evidence_dir }}/COORDINATION.json"
+            mode: '0600'
+          delegate_to: localhost
+
+        - name: Package and fetch both completed evidence directories
+          ansible.builtin.include_tasks: fetch.yml
+          loop: [k8s-api-lb01, k8s-control01]
+          loop_control:
+            loop_var: evidence_host
+
+    - name: Require no orchestration or final observer failure
+      ansible.builtin.assert:
+        that:
+          - not (orchestration_error | bool)
+          - final_cp.rc | default(2) == 0
+          - (final_cp.stdout | from_json).status == 'OBSERVING'
+          - (final_cp.stdout | from_json).age_seconds | float <= 7
+          - lb_state.status == 'PASS_CANDIDATE'
+        fail_msg: STOP - preserve all originals; successful fetch is not test acceptance

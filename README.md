@@ -1,3 +1,5 @@
+> P1-LB-01 최신 후보: [Stage B Runtime 실행·복구 안내](docs/runbooks/STAGE_B_RUNTIME_20260924.md). 주입 코드를 포함한 PR10은 코드/혼합 PR이며 운영 실행 전 exact SHA 독립 리뷰가 필요하다. Runtime은 아직 NOT_RUN이다.
+
 # infra-lb
 
 FDS Kubernetes API Load Balancer configuration, validation and recovery

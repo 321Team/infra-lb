@@ -1,3 +1,5 @@
+> 2026-09-24 후속: LB/API 사전점검 원본 PASS 이후의 주입·복구·Ansible 연속 관측 코드는 [Runtime 검토 후보](STAGE_B_RUNTIME_20260924.md)에 작성했다. 실제 Runtime/독립 리뷰/병합/최종 인수는 미완료이며 아래 기록의 Pre-check 분류는 당시 범위다.
+
 # P1-LB-01 후속 실행 절차 v1.1 — LB backend·방화벽 통합 수집
 
 ## 2026-09-24 05:32 KST 현장 수신 및 API 수집기 수정
