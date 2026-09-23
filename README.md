@@ -12,6 +12,8 @@ P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기�
 
 [현재 후속 절차](docs/runbooks/STAGE_B_FOLLOWUP_20260924.md)를 따른다. [기준선 이슈9](https://github.com/321Team/fds-project-baseline/issues/9)의 9/23 대조 결과는 9/18 backend 3/3 및 9/21 LB API 회복을 확인한다. 아래 9/17 CP2/3 DOWN은 과거 관측이며 현재 장애가 아니다. PR2/3의 독립 승인·병합은 완료됐고, 실제 잔여는 장애 자동탐지 중 인증 API 연속성·복구, 지속성, 최종 Handoff다.
 
+2026-09-24 사용자 보완에 따라 장애 주입은 **LB 측에서만** 수행하도록 고정했다. CP의 Calico 정책·서비스는 유지하고 control01은 읽기 전용 API 관측자로 사용한다. 단일 backend 경로 장애의 자동 탐지가 시험 대상이며 정확한 목적지·작업창·임시 규칙/복구 명령은 아직 확정 전이다.
+
 이번 착수에서는 기존 LB 수집기를 그대로 재사용하고 `tools/stage-b/collect_api_precheck.py`에 control01의 제한된 인증 API 사전점검을 추가한다. 두 결과는 시점별 준비 상태이며 Stage B 인수 결과가 아니다. 서버 실행 결과는 아직 수신하지 않았다. GitHub 직접 pull 권한 준비를 이 점검의 선행조건으로 추가하지 않는다.
 
 ## 현재 범위와 상태
