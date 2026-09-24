@@ -2,9 +2,11 @@
 
 상태: **LB 측 주입 위치 확정 / 정확한 대상·작업창·주입 및 복구 명령 준비 중**. 2026-09-24 사용자 보완: 현장 Calico 정책이 적용된 CP에 직접 장애를 주입하지 않으며 LB에서는 주입 가능하다. 이는 이번 현장 작업 제약이며 Calico가 모든 CP 장애 시험을 기술적으로 불가능하게 한다는 일반화가 아니다. 실제 장애 주입은 미실행이다.
 
+> 2026-09-24 추가: 아래 설계(단계·중단 조건·제출 항목)를 실제 구현한 Ansible 기반 Runtime 후보가 이 PR(infra-lb PR #10)에 있다. 구체적 실행 절차·입력 파일·검토 상태는 이 문서가 아니라 [STAGE_B_RUNTIME_20260924.md](STAGE_B_RUNTIME_20260924.md)와 `tools/stage-b/ansible/inputs.example.json`을 따른다. 이 문서는 설계 근거로 유지한다.
+
 ## 확정할 입력
 
-[EXECUTION_INPUTS.json](../../templates/EXECUTION_INPUTS.json)에 담당자/복구자, 작업창, CP 인수 근거, CP 세 대 준비 근거, 인증 API 기준 결과, 정확히 한 대상 CP, 주입·복구 명령, 관리 경로, 최대 장애 유지시간, 관측 주기, 성공/실패 기준, 승인 기록 URL을 채운다. 공란이 있으면 HOLD다. 작성만으로 승인되지 않는다.
+[EXECUTION_INPUTS.json](../../templates/EXECUTION_INPUTS.json)에 담당자/복구자, 작업창, CP 인수 근거, CP 세 대 준비 근거, 인증 API 기준 결과, 정확히 한 대상 CP, 주입·복구 명령, 관리 경로, 최대 장애 유지시간, 관측 주기, 성공/실패 기준, 승인 기록 URL을 채운다. 공란이 있으면 HOLD다. 작성만으로 승인되지 않는다. **실제 실행 입력은 이 파일이 아니라 `tools/stage-b/ansible/inputs.example.json`을 사용한다** — 필드명이 다르다(위 파일의 `_schema_note` 참조).
 
 2026-09-24 갱신: 9/18 backend 3/3·9/21 API 복구 증거는 이슈9에서 확인했다. 기존 CP1 선행 작업·CP2/3 미준비 설명은 당시 이력이다. 현재 3/3 및 인증 API 기준 결과를 시험 직전에 확인하며, 전체 ICR 종결·Join 반복·Stage A 재시험을 새 선행조건으로 추가하지 않는다. 구체적인 다음 회차와 아직 미확정인 입력은 [후속 절차](STAGE_B_FOLLOWUP_20260924.md)를 따른다.
 

@@ -64,7 +64,7 @@ P1-LB-01의 HAProxy 설정, 검사 소스와 운영 절차를 관리한다. 기�
 | `tools/dad/` | 기존 DAD v1.1 소스와 모의 테스트 |
 | `tools/stage-b/` | 기존 preflight v1.0 소스·테스트·과거 검사용 fixture |
 | `docs/runbooks/` | [DAD](docs/runbooks/DAD.md), [LB preflight](docs/runbooks/LB_PREFLIGHT.md), API, 장애/복구 절차 |
-| `templates/EXECUTION_INPUTS.json` | 다음 시험 입력 양식. NOT_RUN/null은 양식 상태이며 현재 운영 결과가 아님 |
+| `templates/EXECUTION_INPUTS.json` | 상위 계획 체크리스트. NOT_RUN/null은 양식 상태이며 현재 운영 결과가 아님. 장애 시험 실제 실행 입력은 `tools/stage-b/ansible/inputs.example.json`(필드명 다름) |
 | `docs/SOURCE_LOCK.json` | 가져온 소스의 고정 Git SHA·파일 해시·키트 출처 |
 | `docs/MIGRATION_MAP.md` | 기존 PR과 새 저장소의 대응 및 남는 검토 범위 |
 
