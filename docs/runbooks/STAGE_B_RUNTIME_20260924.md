@@ -1,4 +1,6 @@
 > 2026-09-24 추가: [읽기 전용 잔여 점검](STAGE_B_READINESS_20260924.md)으로 별도 inventory 파일 없이 LB SSH를 확인하고, LB native nft --check 결과를 수집할 수 있다. Runtime v1.0의 수동 cleanup 명령 이력 보존 결함을 수정했으므로 운영 후보는 v1.1이며 검토 SHA도 수정 후 HEAD로 바뀐다.
+>
+> 2026-09-24 추가(v1.2): 이하영의 [독립 리뷰](https://github.com/321Team/infra-lb/pull/10#pullrequestreview-5301172238)에서 2건을 지적했다. (1) HAProxy `inter 2s fall 3` 감지에 수 초가 걸리는데 관측기가 API 요청 1회 실패로 즉시 STOP해 정상 실행도 통과 확률이 낮았다 — `maximum_failed_samples`/`maximum_continuous_failure_seconds` 두 입력으로 명시적 실패 허용 기준을 두도록 고쳤다(§8 참조). Lead가 매 실행마다 두 값을 직접 채워야 하며 기본값은 없다. (2) 장애·복구 후 필요한 최소 잔여 작업창을 `150`초로 체크했으나 실제 최악 소요는 `(fault 55 + recovery 65 + 최종 확인 40) = 160`초로 10초 짧았다 — `165`초로 정정했다. HAProxy 설정(`option redispatch`/`retries`) 변경은 하지 않았다.
 
 # P1-LB-01 Stage B Runtime 검토 후보 — 2026-09-24 KST
 
@@ -14,19 +16,20 @@
 - CP 정책·서비스·VM 변경, HAProxy MAINT/disable, firewalld reload/stop, 영구 설정 변경은 없다.
 - **ansible01 → LB SSH는 아직 확인되지 않았다.** 기존 `p1-ans-01/inventory/hosts.yml`에는 LB가 없다. 이미 승인된 LB SSH 접근이 있는 별도 inventory 파일을 `--lb-inventory`로 받는다. alias `k8s-api-lb01`, `ansible_host=10.1.93.109`, 승인된 일반 계정이 필요하다. 임시 inventory를 자동 생성하거나 키·권한·known_hosts를 변경하지 않는다. LB 접근이 없으면 이 조정기는 사용할 수 없고 주입 전에 STOP한다.
 - LB 접속 계정 후보는 이전 로그인에서 확인한 `server01_k8s-api-lb`이다. ansible01에서 이 계정으로 기존 SSH 인증과 `sudo -n` 명령 실행이 가능한지는 미확인이다. 계정 변경은 승인된 기존 범위에서 확인해야 한다.
+- **`maximum_failed_samples`(1~20)·`maximum_continuous_failure_seconds`(1~30) 두 입력을 실행 전 Lead가 직접 확정한다.** 기본값이 없어 미기입/범위 밖 값은 `validate_inputs`가 거부한다. HAProxy 감지 시간(약6~8초)과 관측 간격(2초)을 근거로 값을 정하되, 너무 크면 실제 장애를 놓치고 너무 작으면 정상 전환도 STOP될 수 있다.
 
 ## 동작과 중단·회수
 
 1. Ansible이 **두 서버의 실제 host/account/home을 먼저 확인**한다. 일반 계정의 새 0700 작업 폴더에 소스와 비밀값 없는 입력만 전달하고 SHA256을 확인한다. 기존 inventory/config 내용이나 SSH 비밀값은 증적으로 수집하지 않는다.
-2. control01에서 수정·현장 검증된 API precheck 로직을 사용해 실행 시점 조건을 확인한 뒤, 유한 시간 관측기를 실행한다. NodeList GET(정확한6개 Ready)와 readyz를 목표2초 간격으로 호출한다. 실제 간격·요청 시간이 7초를 넘거나 첫 요청이 실패하면 STOP하며 재시도로 덮지 않는다. 표본별 원문·rc·UTC/KST·monotonic 시간을 보존한다. 관측기는 최대240초 후 STOP한다.
+2. control01에서 수정·현장 검증된 API precheck 로직을 사용해 실행 시점 조건을 확인한 뒤, 유한 시간 관측기를 실행한다. NodeList GET(정확한6개 Ready)와 readyz를 목표2초 간격으로 호출한다. 실제 간격·요청 시간이 7초를 넘거나 API 호출이 실패하면 그 표본을 실패로 기록하되, 확정한 `maximum_failed_samples`/`maximum_continuous_failure_seconds` 예산을 넘기 전까지는 관측을 계속한다(재시도로 실패를 덮어쓰지 않고 그대로 남긴다). 표본별 원문·rc·UTC/KST·monotonic 시간을 보존한다. 관측기는 최대240초 후 STOP한다.
 3. LB 감독기는 현재 주소/리스너/HAProxy PID·argv·설정 hash·3UP/L4OK·송신 경로·firewalld 상태를 확인한다. 같은 계정 중복 프로세스와 기존 `p1lb_` 테이블이 있으면 STOP한다. 실제 현장의 `nft -c -f -` 검사에 성공해야 한다. 이 검사는 아직 여기서 실행되지 않았다.
 4. 제어기는 새 CP 성공 sequence만 LB에 전달한다. 중복 sequence는 lease를 연장하지 않는다. LB는 자신의 monotonic 시계로 수신 후10초만 lease를 유효하게 본다. CP/LB 시계의 동기화를 lease 판정에 사용하지 않는다. 제어기 CP 상태 조회·LB 전달·LB 상태 조회에는 각각5초 Ansible task 제한을 둔다.
 5. fresh lease와 backend3UP가30초 유지된 뒤 임시 테이블을 만든다. nft 배치는 `create table inet p1lb_<run_id>`, 만료60초의 `.104` set 원소, output hook priority0/policy accept, `ens160 / saddr .109 / daddr @target / TCP dport6443 / counter drop`만 포함한다. firewalld의 소유 테이블과 priority10 출력 체인을 수정하지 않는다. 패킷·heartbeat가 set 만료를 갱신하지 않는다.
 6. 정상 경로는 약55초에 임시 테이블을 삭제한다. 그 전에 HAProxy target `DOWN`+`L4TOUT/L4CON`을 실제 관측하고 나머지2대 UP/L4OK를 요구한다. 이후3UP/L4OK와 API 성공 관측이30초 유지되어야 한다. drop counter>0, 자체 테이블 부재, HAProxy 설정/PID 및 firewalld stateless 규칙의 일치도 확인한다.
 7. API 실패를 제어기가 수신하면 LB abort를 요청한다. 제어기/SSH 단절 시 lease 만료를 LB가 확인하여 회수한다. **즉시·0초 복구를 보장하지 않는다.** SSH 전달·진행 중인 제한 명령·poll에 따른 지연이 있다. LB privileged 명령은 inner2초/outer4초 제한이며 여러 회수 조회가 이어질 수 있다. 감독기까지 강제 종료되면 커널 set의60초 만료가 별도 차단 해제 장치다. set 만료는 테이블 삭제나3UP 확인과 다르다.
-8. 실패해도 자신이 시도한 run marker의 테이블만 회수하고 최대40초의 backend 복구 확인을 남긴다. 삭제 실패/marker 불일치/복구 미확인은 STOP으로 남긴다. `.104`의 기존 연결도 차단 대상이므로 전환 중 API 실패0건을 사전에 보장하지 않는다.
+8. 실패해도 자신이 시도한 run marker의 테이블만 회수하고 최대40초의 backend 복구 확인을 남긴다. 삭제 실패/marker 불일치/복구 미확인은 STOP으로 남긴다. `.104`의 기존 연결도 차단 대상이므로 전환 중 API 실패0건을 사전에 보장하지 않는다 — 그래서 확정한 실패 예산 안에서는 계속 관측하고, 예산을 넘는 실패(총 건수 또는 연속 지속시간)만 STOP으로 판정한다. 예산 판정은 관측기(실시간)와 `run_stageb.py`의 최종 분류(원본 표본 재계산) 양쪽에서 동일 기준으로 이중 확인한다.
 
-API 호출은 전수 트래픽이 아니라 제한된 표본이다. 목표2초, baseline30초, fault최대60초, recovery30초, gap한도7초는 이 후보의 **시험 파라미터**이며 새 SLA/AC 승인으로 해석하지 않는다.
+API 호출은 전수 트래픽이 아니라 제한된 표본이다. 목표2초, baseline30초, fault최대60초, recovery30초, gap한도7초, 장애·복구 후 최소 잔여 작업창165초는 이 후보의 **시험 파라미터**이며 새 SLA/AC 승인으로 해석하지 않는다.
 
 ## 전달 묶음과 명령
 

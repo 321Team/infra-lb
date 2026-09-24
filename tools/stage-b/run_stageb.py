@@ -17,7 +17,7 @@ import tempfile
 import uuid
 
 from collect_preflight import Stop, package, sha, stamp, write_json
-from stageb_common import source_files, validate_inputs
+from stageb_common import failure_budget_exceeded, source_files, validate_inputs
 
 
 def verify_delivery(root):
@@ -82,11 +82,16 @@ def classify(folder, data, rc):
         cp_state = json.loads(evidence["cp"]["STATE.json"])
         lb_result = json.loads(evidence["lb"]["RESULT.json"])
         samples = [json.loads(x) for x in evidence["cp"]["SAMPLES.jsonl"].splitlines()]
+        # Recomputed independently from the raw samples rather than trusting the
+        # observer's own live judgment; must agree with the same confirmed
+        # maximum_failed_samples/maximum_continuous_failure_seconds in `data`.
+        budget_reason = failure_budget_exceeded(samples, data)
         if (rc != 0 or cp_state["status"] != "OBSERVER_COMPLETE" or lb_result["status"] != "PASS_CANDIDATE"
-                or len(samples) < 40 or not all(s["success"] for s in samples)
+                or len(samples) < 40 or budget_reason
                 or [s["sequence"] for s in samples] != list(range(1, len(samples) + 1))):
-            raise Stop("RUNTIME_OUTCOME_OR_SAMPLES_NOT_PASS_CANDIDATE")
-        result.update(status="PASS_CANDIDATE", sample_count=len(samples), lb_result=lb_result,
+            raise Stop("RUNTIME_OUTCOME_OR_SAMPLES_NOT_PASS_CANDIDATE" + (":" + budget_reason if budget_reason else ""))
+        result.update(status="PASS_CANDIDATE", sample_count=len(samples),
+                      failed_sample_count=sum(1 for s in samples if not s["success"]), lb_result=lb_result,
                       caveat="Review raw timeline and coverage; no SLA, reboot or final acceptance claim")
     except Exception as exc:
         result["reason"] = type(exc).__name__ + ": " + str(exc)

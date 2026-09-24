@@ -8,5 +8,9 @@
   "lb_user": "server01_k8s-api-lb",
   "window_start_kst": "",
   "window_end_kst": "",
-  "oob_reference": ""
+  "oob_reference": "",
+  "_maximum_failed_samples_note": "FILL_INT_1_TO_20 -- HAProxy inter 2s/fall 3 detection takes several seconds; Lead confirms how many transition samples may fail",
+  "maximum_failed_samples": null,
+  "_maximum_continuous_failure_seconds_note": "FILL_INT_1_TO_30 -- longest single unbroken run of failed samples to tolerate before treating it as a real outage",
+  "maximum_continuous_failure_seconds": null
 }

@@ -15,6 +15,15 @@ from stageb_rules import PREFIX, table_name, rules, table_rows
 BASELINE_SECONDS = 30
 FAULT_SECONDS = 60
 RECOVERY_SECONDS = 30
+RECOVERY_TIMEOUT_SECONDS = 65
+FINAL_RECOVERY_CHECK_SECONDS = 40
+# Worst case after the pre-injection window check: the fault loop can run up to
+# FAULT_SECONDS-5 before cleanup, then the recovery loop up to
+# RECOVERY_TIMEOUT_SECONDS, then the finally-block's own recovery confirmation
+# up to FINAL_RECOVERY_CHECK_SECONDS. A prior fixed "150" here was 10s short of
+# that total and let the window check pass runs that could still hit
+# WORK_WINDOW_ENDED mid-cleanup.
+MINIMUM_REMAINING_WINDOW_SECONDS = (FAULT_SECONDS - 5) + RECOVERY_TIMEOUT_SECONDS + FINAL_RECOVERY_CHECK_SECONDS + 5
 
 
 def check_tables(data, allowed=None):
@@ -136,7 +145,7 @@ class Injector:
                 time.sleep(1)
             # Recheck after the last potentially blocking query, before mutation.
             observed = self.guard(window_end)
-            if (window_end - dt.datetime.now(dt.timezone.utc)).total_seconds() < 150:
+            if (window_end - dt.datetime.now(dt.timezone.utc)).total_seconds() < MINIMUM_REMAINING_WINDOW_SECONDS:
                 raise Stop("INSUFFICIENT_WINDOW_FOR_FAULT_AND_RECOVERY")
             self.attempted = True  # Set before command: uncertain commit must also be cleaned.
             require_ok(self.command("inject", ["nft", "-f", "-"], input_bytes=rules(self.data["run_id"])))
@@ -156,7 +165,7 @@ class Injector:
             recovered = None
             started = time.monotonic()
             while recovered is None or time.monotonic() - recovered < RECOVERY_SECONDS:
-                if time.monotonic() - started > 65:
+                if time.monotonic() - started > RECOVERY_TIMEOUT_SECONDS:
                     raise Stop("RECOVERY_NOT_STABLE_FOR_30_SECONDS")
                 observed = self.guard(window_end)
                 stats = self.stats()
@@ -180,7 +189,7 @@ class Injector:
                 result.update(status="STOP", cleanup="UNCONFIRMED", cleanup_error=str(exc))
             # Never omit recovery evidence on STOP. Kernel expiry alone is not cleanup PASS.
             try:
-                recovery_deadline = time.monotonic() + 40
+                recovery_deadline = time.monotonic() + FINAL_RECOVERY_CHECK_SECONDS
                 while True:
                     result["final_stats"] = self.stats()
                     if result["final_stats"]["all_three_up"] or time.monotonic() >= recovery_deadline:

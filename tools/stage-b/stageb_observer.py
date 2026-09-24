@@ -6,7 +6,7 @@ import time
 import collect_api_precheck as api
 from collect_preflight import Stop, json_output, require_ok, stamp
 from stageb_common import (MAX_RUN_SECONDS, SAMPLE_SECONDS, MAX_SAMPLE_SECONDS,
-                           RuntimeRunner, atomic, binaries, state)
+                           RuntimeRunner, atomic, binaries, failure_budget_exceeded, state)
 
 
 def run(folder, data):
@@ -24,9 +24,11 @@ def run(folder, data):
                   "--tls-server-name=10.1.93.109", "--insecure-skip-tls-verify=false", "--request-timeout=3s"]
         began = time.monotonic()
         previous_start = None
+        samples = []
         while time.monotonic() - began < MAX_RUN_SECONDS:
             if (folder / "STOP").exists():
-                state(folder, "OBSERVER_COMPLETE", sequence=sequence, reason="CONTROLLER_STOP_REQUEST")
+                state(folder, "OBSERVER_COMPLETE", sequence=sequence, reason="CONTROLLER_STOP_REQUEST",
+                      failed_sample_count=sum(1 for s in samples if not s["success"]))
                 return
             sequence += 1
             start = time.monotonic()
@@ -46,13 +48,21 @@ def run(folder, data):
                     raise Stop("SAMPLE_DURATION_EXCEEDED_7_SECONDS")
                 sample["success"] = True
             except Exception as exc:
+                # A bounded number/duration of failed samples is expected while
+                # HAProxy is still detecting the injected fault (inter 2s/fall 3
+                # takes several seconds); do not abort the whole run for that.
+                # The confirmed budget below still stops on a real outage.
                 sample["reason"] = type(exc).__name__ + ": " + str(exc)
-                raise
             finally:
                 sample.update(finished=stamp(), end_monotonic=time.monotonic())
+                samples.append(sample)
                 with (folder / "SAMPLES.jsonl").open("a") as f:
                     f.write(json.dumps(sample) + "\n")
             state(folder, "OBSERVING", sequence=sequence, sample=sample, run_id=data["run_id"])
+            if not sample["success"]:
+                reason = failure_budget_exceeded(samples, data)
+                if reason:
+                    raise Stop(reason)
             time.sleep(max(0, SAMPLE_SECONDS - (time.monotonic() - start)))
         raise Stop("OBSERVER_240_SECOND_LIMIT")
     except BaseException as exc:

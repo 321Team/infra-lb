@@ -24,7 +24,8 @@ def inputs():
                 review_reference="TEST_ONLY", runtime_authorized=True, lead="TEST_ONLY",
                 target="10.1.93.104:6443", lb_user="test_user", oob_reference="TEST_ONLY",
                 window_start_kst=(now - dt.timedelta(minutes=1)).isoformat(),
-                window_end_kst=(now + dt.timedelta(minutes=20)).isoformat())
+                window_end_kst=(now + dt.timedelta(minutes=20)).isoformat(),
+                maximum_failed_samples=5, maximum_continuous_failure_seconds=10)
 
 
 class Clock:
@@ -169,7 +170,12 @@ class GateTests(unittest.TestCase):
         common.validate_inputs(inputs())
         for key, value in [("runtime_authorized", False), ("reviewed_revision", "c" * 40),
                            ("window_start_kst", ""), ("target", "10.1.93.102:6443"),
-                           ("lb_user", "root"), ("oob_reference", ""), ("run_id", "../../etc")]:
+                           ("lb_user", "root"), ("oob_reference", ""), ("run_id", "../../etc"),
+                           ("maximum_failed_samples", 0), ("maximum_failed_samples", 21),
+                           ("maximum_failed_samples", None), ("maximum_failed_samples", "5"),
+                           ("maximum_continuous_failure_seconds", 0),
+                           ("maximum_continuous_failure_seconds", 31),
+                           ("maximum_continuous_failure_seconds", None)]:
             with self.subTest(key=key), self.assertRaises(base.Stop):
                 data = inputs()
                 data[key] = value
@@ -207,18 +213,82 @@ class GateTests(unittest.TestCase):
             common.preserve_source(Path(tmp), {"source_hashes": {}})
 
 
+class FailureBudgetTests(unittest.TestCase):
+    @staticmethod
+    def sample(success, start, end):
+        return {"success": success, "start_monotonic": start, "end_monotonic": end}
+
+    def test_all_success_has_no_budget_concern(self):
+        samples = [self.sample(True, i, i) for i in range(5)]
+        self.assertIsNone(common.failure_budget_exceeded(
+            samples, {"maximum_failed_samples": 1, "maximum_continuous_failure_seconds": 1}))
+
+    def test_total_failed_count_over_budget_even_when_scattered(self):
+        # Three isolated (non-consecutive) failures, each too short to trip the
+        # continuous-duration check, must still trip the total-count check.
+        samples = [self.sample(False, 0, 0), self.sample(True, 1, 1), self.sample(False, 2, 2),
+                   self.sample(True, 3, 3), self.sample(False, 4, 4)]
+        self.assertEqual(common.failure_budget_exceeded(
+            samples, {"maximum_failed_samples": 2, "maximum_continuous_failure_seconds": 1000}),
+            "TOTAL_FAILED_SAMPLES_EXCEEDED")
+
+    def test_continuous_streak_over_budget(self):
+        samples = [self.sample(False, 0, 0), self.sample(False, 1, 11)]
+        self.assertEqual(common.failure_budget_exceeded(
+            samples, {"maximum_failed_samples": 1000, "maximum_continuous_failure_seconds": 5}),
+            "CONTINUOUS_FAILURE_SECONDS_EXCEEDED")
+
+    def test_success_resets_the_streak(self):
+        # Without the reset, the streak from sample 0 through sample 3 (0->3s)
+        # would exceed a 1.5s budget; the intervening success must reset it.
+        samples = [self.sample(False, 0, 0), self.sample(False, 1, 1),
+                   self.sample(True, 2, 2), self.sample(False, 3, 3)]
+        self.assertIsNone(common.failure_budget_exceeded(
+            samples, {"maximum_failed_samples": 100, "maximum_continuous_failure_seconds": 1.5}))
+
+
 class ObserverTests(unittest.TestCase):
-    def test_first_api_failure_is_not_retried_or_overwritten(self):
+    def test_transition_failures_within_budget_are_tolerated_then_stopped_on_count(self):
+        # HAProxy inter 2s/fall 3 needs several seconds to mark a target DOWN, so
+        # a handful of consecutive sample failures during that window must not
+        # abort the whole observation; only exceeding the confirmed budget does.
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
+            clock = Clock()
+            data = inputs()
+            data["maximum_failed_samples"] = 3
+            data["maximum_continuous_failure_seconds"] = 1000
             with patch.object(observer, "binaries", return_value={}), \
                  patch.object(observer.api, "inspect", return_value={"status": "API_PRECHECK_READY"}), \
+                 patch.object(observer.time, "monotonic", clock.monotonic), \
+                 patch.object(observer.time, "sleep", clock.sleep), \
                  patch.object(observer.RuntimeRunner, "run", return_value={"name": "test", "return_code": 1, "stdout": "", "stderr": ""}) as run:
-                observer.run(root, inputs())
-            self.assertEqual(run.call_count, 1)
-            self.assertEqual(common.read(root / "STATE.json")["status"], "STOP")
-            sample = json.loads((root / "SAMPLES.jsonl").read_text())
-            self.assertFalse(sample["success"])
+                observer.run(root, data)
+            samples = [json.loads(x) for x in (root / "SAMPLES.jsonl").read_text().splitlines()]
+            # 4 failed samples: the first 3 are tolerated, the 4th exceeds the budget.
+            self.assertEqual(len(samples), 4)
+            self.assertEqual(run.call_count, 4)
+            self.assertTrue(all(not s["success"] for s in samples))
+            state = common.read(root / "STATE.json")
+            self.assertEqual(state["status"], "STOP")
+            self.assertIn("TOTAL_FAILED_SAMPLES_EXCEEDED", state["reason"])
+
+    def test_transition_failures_stopped_on_continuous_duration(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            clock = Clock()
+            data = inputs()
+            data["maximum_failed_samples"] = 1000
+            data["maximum_continuous_failure_seconds"] = 5
+            with patch.object(observer, "binaries", return_value={}), \
+                 patch.object(observer.api, "inspect", return_value={"status": "API_PRECHECK_READY"}), \
+                 patch.object(observer.time, "monotonic", clock.monotonic), \
+                 patch.object(observer.time, "sleep", clock.sleep), \
+                 patch.object(observer.RuntimeRunner, "run", return_value={"name": "test", "return_code": 1, "stdout": "", "stderr": ""}):
+                observer.run(root, data)
+            state = common.read(root / "STATE.json")
+            self.assertEqual(state["status"], "STOP")
+            self.assertIn("CONTINUOUS_FAILURE_SECONDS_EXCEEDED", state["reason"])
 
     def test_precheck_failure_produces_no_samples(self):
         with tempfile.TemporaryDirectory() as tmp:

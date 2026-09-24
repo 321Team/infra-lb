@@ -53,6 +53,15 @@ def validate_inputs(data, now=None):
         raise Stop("THIS_SOURCE_SUPPORTS_ONLY_CONTROL03")
     if not re.fullmatch(r"[a-z_][a-z0-9_-]{0,31}", data.get("lb_user", "")) or data["lb_user"] == "root":
         raise Stop("EXISTING_NONROOT_LB_ACCOUNT_REQUIRED")
+    # HAProxy inter 2s/fall 3 needs multiple consecutive failed checks before
+    # marking a backend DOWN, so a transition through the fault window can
+    # legitimately fail a small, explicitly Lead-confirmed number of samples.
+    # These are never defaulted; a missing or out-of-range value stops the run.
+    if type(data.get("maximum_failed_samples")) is not int or not 0 < data["maximum_failed_samples"] <= 20:
+        raise Stop("MAXIMUM_FAILED_SAMPLES_REQUIRED_1_TO_20")
+    if (type(data.get("maximum_continuous_failure_seconds")) is not int
+            or not 0 < data["maximum_continuous_failure_seconds"] <= 30):
+        raise Stop("MAXIMUM_CONTINUOUS_FAILURE_SECONDS_REQUIRED_1_TO_30")
     try:
         start = dt.datetime.fromisoformat(data["window_start_kst"])
         end = dt.datetime.fromisoformat(data["window_end_kst"])
@@ -63,6 +72,27 @@ def validate_inputs(data, now=None):
     if not start <= now < end or (end - now).total_seconds() < MAX_RUN_SECONDS + 60:
         raise Stop("OUTSIDE_WINDOW_OR_LESS_THAN_300_SECONDS_REMAIN")
     return end
+
+
+def failure_budget_exceeded(samples, data):
+    """Shared by the live observer and post-hoc classification so both use the
+    same explicitly confirmed budget. samples are SAMPLES.jsonl-style dicts
+    with success/start_monotonic/end_monotonic. Returns a reason string once
+    the confirmed budget is exceeded, else None. A single unbroken failure
+    streak spanning multiple samples is measured end-to-end, not per-sample."""
+    failed = [s for s in samples if not s["success"]]
+    if len(failed) > data["maximum_failed_samples"]:
+        return "TOTAL_FAILED_SAMPLES_EXCEEDED"
+    streak_start, longest = None, 0.0
+    for s in samples:
+        if s["success"]:
+            streak_start = None
+            continue
+        streak_start = s["start_monotonic"] if streak_start is None else streak_start
+        longest = max(longest, s["end_monotonic"] - streak_start)
+    if longest > data["maximum_continuous_failure_seconds"]:
+        return "CONTINUOUS_FAILURE_SECONDS_EXCEEDED"
+    return None
 
 
 def local_identity(role, data):
