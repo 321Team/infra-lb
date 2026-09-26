@@ -40,32 +40,43 @@ def parse_ansible_result(path):
     return verify_identity(json.loads(result["stdout"]))
 
 
-def ansible_args(executable, folder):
+def ansible_args(executable, folder, private_key):
     # Inline one-host inventory is a temporary connection description only.
     # Existing p1-ans-01 inventory, SSH keys and remote accounts are not changed.
     extra = {"ansible_user": LB_USER, "ansible_become": False, "ansible_python_interpreter": "/usr/bin/python3",
-             "ansible_ssh_common_args": "-o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectionAttempts=1 -o ConnectTimeout=5 -o ClearAllForwardings=yes -o PermitLocalCommand=no -o RemoteCommand=none"}
+             "ansible_ssh_common_args": "-o BatchMode=yes -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes -o ConnectionAttempts=1 -o ConnectTimeout=5 -o ClearAllForwardings=yes -o PermitLocalCommand=no -o RemoteCommand=none"}
     return [executable, "10.1.93.109", "-i", "10.1.93.109,", "-c", "ssh", "-u", LB_USER,
-            "-e", json.dumps(extra), "-m", "ansible.builtin.command", "-a", json.dumps({"argv": ["/usr/bin/python3", "-c", IDENTITY]}),
+            "--private-key", str(private_key), "-e", json.dumps(extra), "-m", "ansible.builtin.command", "-a", json.dumps({"argv": ["/usr/bin/python3", "-c", IDENTITY]}),
             "--tree", str(folder / "ansible-result")]
 
 
-def inspect_ansible(folder, home):
+def inspect_ansible(folder, home, private_key_arg):
     project = home / "p1-ans-01"
     config, inventory = project / "ansible.cfg", project / "inventory/hosts.yml"
     if not config.is_file() or not inventory.is_file():
         raise Stop("EXISTING_ANSIBLE_PROJECT_MISSING")
+    if not private_key_arg:
+        raise Stop("ANSIBLE_PRIVATE_KEY_REQUIRED")
+    private_key = Path(private_key_arg).expanduser()
+    if not private_key.is_absolute() or private_key.is_symlink() or not private_key.is_file():
+        raise Stop("ANSIBLE_PRIVATE_KEY_INVALID")
+    key_stat = private_key.stat()
+    if key_stat.st_uid != os.getuid() or (key_stat.st_mode & 0o077):
+        raise Stop("ANSIBLE_PRIVATE_KEY_OWNER_OR_MODE_INVALID")
+    if not os.access(private_key, os.R_OK):
+        raise Stop("ANSIBLE_PRIVATE_KEY_NOT_READABLE")
     exe = shutil.which("ansible")
     if not exe:
         raise Stop("ANSIBLE_NOT_FOUND_SOURCE_EXISTING_ENV_FIRST")
     env = dict(os.environ, ANSIBLE_CONFIG=str(config), ANSIBLE_HOST_KEY_CHECKING="True",
                ANSIBLE_NOCOLOR="1", ANSIBLE_TIMEOUT="5",
                ANSIBLE_SSH_ARGS="-o ControlMaster=no -o ControlPath=none -o ControlPersist=no")
-    command = ansible_args(exe, folder)
+    command = ansible_args(exe, folder, private_key)
     write_json(folder / "COMMAND.json", {"argv": command, "started": stamp(),
                "config_sha256": sha(config), "inventory_sha256": sha(inventory),
                "inventory_contents_collected": False, "ssh_credentials_collected": False,
-               "connection_scope": "existing SSH authentication only, fixed LB ordinary account"})
+               "private_key_path": str(private_key), "private_key_contents_collected": False,
+               "connection_scope": "existing SSH authentication only, fixed LB ordinary account, explicit existing private key"})
     with (folder / "ansible.stdout.txt").open("xb") as out, (folder / "ansible.stderr.txt").open("xb") as err:
         proc = subprocess.Popen(command, cwd=project, env=env, stdout=out, stderr=err,
                                 stdin=subprocess.DEVNULL, start_new_session=True)
@@ -138,6 +149,7 @@ def package(folder):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--role", choices=["ansible", "lb"], required=True)
+    p.add_argument("--private-key", help="Existing ansible01 SSH private key path; required only for --role ansible")
     p.add_argument("--run", action="store_true")
     args = p.parse_args()
     account = pwd.getpwuid(os.getuid())
@@ -158,8 +170,10 @@ def main():
         shutil.copyfile(Path(__file__).with_name(name), folder / name)
     try:
         if args.role == "ansible":
-            result = inspect_ansible(folder, home)
+            result = inspect_ansible(folder, home, args.private_key)
         else:
+            if args.private_key:
+                raise Stop("PRIVATE_KEY_NOT_ALLOWED_FOR_LB_ROLE")
             runner = RuntimeRunner(folder, binaries(["nft", "sudo", "env", "timeout"]), seconds=5)
             result = inspect_nft(runner, folder, uuid.uuid4().hex)
     except (Exception, KeyboardInterrupt) as exc:
