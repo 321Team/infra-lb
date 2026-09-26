@@ -46,11 +46,13 @@ set -euo pipefail
 cd "$HOME/p1-lb-stageb-readiness-20260924/FDS_P1_LB_01_StageB_Readiness_20260924_v1.0"
 sha256sum -c SHA256SUMS
 source "$HOME/.config/ansible/p1-ans-01.env"
-python3 collect_stageb_readiness.py --role ansible --run
+python3 collect_stageb_readiness.py --role ansible \
+  --private-key "$ANSIBLE_PRIVATE_KEY_FILE" \
+  --run
 )
 ```
 
-별도 inventory 파일은 요구하지 않는다. 프로세스 인자로만 `10.1.93.109,` 한 대를 지정하고 기존 계정 `server01_k8s-api-lb`로 host/user/uid/euid를 조회한다. 저장소 inventory를 수정하거나 영구 inventory를 만들지 않는다. 기존 p1-ans-01 설정과 이미 사용 가능한 SSH 인증만 사용하고 **BatchMode=yes·StrictHostKeyChecking=yes·become=false**를 강제한다. 키/비밀번호/known_hosts를 생성·완화하지 않는다. 현재 전용 키가 LB 일반 계정에 등록되지 않았다면 실패할 수 있으며, 이때 권한을 자동 확대하지 않는다.
+별도 inventory 파일은 요구하지 않는다. 프로세스 인자로만 `10.1.93.109,` 한 대를 지정하고 기존 계정 `server01_k8s-api-lb`로 host/user/uid/euid를 조회한다. 저장소 inventory를 수정하거나 영구 inventory를 만들지 않는다. 기존 p1-ans-01 설정과 이미 사용 가능한 SSH 인증만 사용한다. `--private-key "$ANSIBLE_PRIVATE_KEY_FILE"`로 기존 승인 키 경로를 명시하고 **BatchMode=yes·StrictHostKeyChecking=yes·IdentitiesOnly=yes·become=false**를 강제한다. 환경 파일의 변수가 export되지 않은 경우에도 키 선택이 모호해지지 않도록 경로를 명시적 인자로 전달한다. 키/비밀번호/known_hosts를 생성·완화하지 않는다. 현재 전용 키가 LB 일반 계정에 등록되지 않았다면 실패할 수 있으며, 이때 권한을 자동 확대하지 않는다.
 
 정상: `LB_SSH_IDENTITY_CONFIRMED`. 실제 host/user 일치와 nonroot/euid 동일이 필요하며 sudo/nft 접근은 이 단계에서 판정하지 않는다. `STOP`이면 Ansible 원문을 회수하여 route/known-host/authentication/계정 중 실패 원인을 구분한다. 출력 메시지에 대한 추측으로 키를 추가하지 않는다.
 
