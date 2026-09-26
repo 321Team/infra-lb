@@ -1,0 +1,21 @@
+---
+- name: Package only a terminal inactive agent directory
+  ansible.builtin.command:
+    argv: "{{ hostvars[evidence_host].agent + ['archive'] + hostvars[evidence_host].agent_args }}"
+  delegate_to: "{{ evidence_host }}"
+  register: packed
+  changed_when: true
+  failed_when: false
+  ignore_unreachable: true
+
+- name: Fetch exact predetermined archive and sidecar from existing user home
+  ansible.builtin.fetch:
+    src: "{{ hostvars[evidence_host].login.home }}/P1_LB_STAGEB_{{ inputs.run_id }}{{ item }}"
+    dest: "{{ evidence_dir }}/{{ hostvars[evidence_host].role }}{{ item }}"
+    flat: true
+    validate_checksum: true
+  delegate_to: "{{ evidence_host }}"
+  loop: ['.tar.gz', '.tar.gz.sha256']
+  when: packed.rc | default(2) == 0
+  ignore_errors: true
+  ignore_unreachable: true

@@ -19,6 +19,7 @@
     "result_evidence_url": null
   },
   "failover": {
+    "_schema_note": "High-level planning checklist only. The actual machine-read input for the Ansible-coordinated Runtime candidate (infra-lb PR #10) is a separate file, tools/stage-b/ansible/inputs.example.json, with its own field names (e.g. maximum_failed_samples instead of maximum_failed_requests below) -- fill and use that file for an actual run, not this one.",
     "kind": null,
     "cp_readiness_and_acceptance_evidence": null,
     "three_backends_up_evidence": null,

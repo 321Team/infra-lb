@@ -57,12 +57,12 @@ cfg SHA-256은 `afd19086ab8529d621185c231fa3c588eaeeb2025a08445e90f28cf27b00504f
 
 </details>
 
-**상태: DECIDED / 등록 준비.** 실제 키 생성과 GitHub 등록은 서버 담당자가 수행하며, 등록 완료 시 fingerprint와 등록일을 이 항목에 추가한다. 이 결정은 LB 서버의 다른 방화벽·서비스 설정을 변경하지 않으며, Stage B preflight 실행 자체를 승인하는 것도 아니다.
+**현행 상태는 위 RECONSIDERING이다.** 기존 DECIDED / 등록 준비 문구는 철회된 Deploy Key안의 이력이다. 신규 App·키 보관 위치는 미확정이며 이번 후속에서 생성하지 않는다. 고정 SHA와 파일 해시를 포함한 전달 묶음으로 점검 소스를 옮길 수 있으므로 직접 pull 준비가 Stage B 사전점검을 차단하지 않는다.
 
 ## 현재 후속과 복구 참고
 
 - 사전점검은 [LB_PREFLIGHT](runbooks/LB_PREFLIGHT.md), 인증 API와 failover는 각 runbook 및 미확정 실행 입력을 따른다.
-- CP2/3 연결 거절은 준비 미완료 관측이다. LB 파일 이관만으로 CP API 기동 원인이나 firewall 원인을 확정하지 않는다.
+- CP2/3 연결 거절은 9/17 당시 관측이다. 이슈9의 9/18 backend 3/3·9/21 API 복구 기록을 유지하고, 다음 장애 시험 직전에는 현재 3/3과 인증 API를 확인한다. 과거 미준비를 현행 차단으로 사용하지 않는다.
 - [Stage A 구축 가이드 원본](../archive/stage-a-guide-v1.5/FDS_P1-LB-01_Stage_A_Build_Guide_v1.5.md)은 당시 구성/복구 절차의 참고 자료다. 현재 환경 재적용을 검증한 배포 지침이 아니다.
 - 노션의 `haproxy.cfg.before-stage-a`와 `haproxy.cfg.failed-runtime-socket`은 경로·해시 기록만 확보했다. 백업 파일 실물·현재 복구 적합성은 확인하지 않았다. 특히 실패한 socket 설정을 복구 기준으로 선택하지 않는다.
 - 공통 Node→LB 검사는 [infra-ansible playbook](https://github.com/321Team/infra-ansible/blob/57e7cc740e7a406387848c52f4aa56b98c516168/playbooks/p1-lb-01-stage-a-nodes.yml)에서 관리한다. CP firewall·ICR 소스는 infra-kubernetes에서 관리한다.

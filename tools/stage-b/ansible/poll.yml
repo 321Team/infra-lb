@@ -1,0 +1,60 @@
+---
+- name: Skip all remaining iterations after terminal LB result
+  when: not (lb_done | bool)
+  block:
+    - name: Read control01 observer state
+      ansible.builtin.command:
+        argv: "{{ agent + ['status'] + agent_args }}"
+      register: cp_read
+      changed_when: false
+      timeout: 5
+
+    - name: Parse and validate API observer freshness
+      ansible.builtin.set_fact:
+        cp_state: "{{ cp_read.stdout | from_json }}"
+
+    - name: Stop on any API failure, stale sample or sequence reversal
+      ansible.builtin.assert:
+        that:
+          - cp_state.status == 'OBSERVING'
+          - cp_state.run_id == inputs.run_id
+          - cp_state.age_seconds | float >= 0
+          - cp_state.age_seconds | float <= 7
+          - cp_state.sequence | int >= previous_sequence | int
+          - cp_state.sample.success | bool
+
+    - name: Renew LB lease only for a new successful CP sequence
+      ansible.builtin.command:
+        argv: "{{ lb.agent + ['lease'] + lb.agent_args + ['--sequence', cp_state.sequence | string] }}"
+      delegate_to: k8s-api-lb01
+      when: cp_state.sequence | int > previous_sequence | int
+      timeout: 5
+
+    - name: Remember last relayed sequence
+      ansible.builtin.set_fact:
+        previous_sequence: "{{ cp_state.sequence }}"
+
+    - name: Read LB state
+      ansible.builtin.command:
+        argv: "{{ lb.agent + ['status'] + lb.agent_args }}"
+      delegate_to: k8s-api-lb01
+      register: lb_read
+      changed_when: false
+      timeout: 5
+
+    - name: Retain cross-host sequence correlation on controller
+      ansible.builtin.copy:
+        content: "{{ {'poll': poll_number, 'cp': cp_state, 'lb': lb_read.stdout | from_json} | to_nice_json }}\n"
+        dest: "{{ evidence_dir }}/poll_{{ '%03d' | format(poll_number) }}.json"
+        mode: '0600'
+      delegate_to: localhost
+
+    - name: Record LB result
+      ansible.builtin.set_fact:
+        lb_state: "{{ lb_read.stdout | from_json }}"
+        lb_done: "{{ (lb_read.stdout | from_json).status in ['PASS_CANDIDATE', 'STOP'] }}"
+
+    - name: Bound polling rate
+      ansible.builtin.pause:
+        seconds: 1
+      when: not (lb_done | bool)
