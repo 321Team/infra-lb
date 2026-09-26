@@ -9,8 +9,8 @@
   "window_start_kst": "",
   "window_end_kst": "",
   "oob_reference": "",
-  "_maximum_failed_samples_note": "FILL_INT_1_TO_20 -- HAProxy inter 2s/fall 3 detection takes several seconds; Lead confirms how many transition samples may fail",
-  "maximum_failed_samples": null,
-  "_maximum_continuous_failure_seconds_note": "FILL_INT_1_TO_30 -- longest single unbroken run of failed samples to tolerate before treating it as a real outage",
-  "maximum_continuous_failure_seconds": null
+  "_maximum_failed_samples_note": "Lead-confirmed 2026-09-26: worst-case HAProxy inter 2s/fall 3/timeout-check 5s DROP detection window is ~19s; SAMPLE_SECONDS=2 bounds samples in that window to ~10; 12 adds margin",
+  "maximum_failed_samples": 12,
+  "_maximum_continuous_failure_seconds_note": "Lead-confirmed 2026-09-26: worst-case detection window (3x timeout-check 5s + 2x inter 2s = 19s) plus ~25% margin",
+  "maximum_continuous_failure_seconds": 24
 }
