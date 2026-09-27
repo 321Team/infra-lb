@@ -13,7 +13,7 @@ import shutil
 import subprocess
 import sys
 
-TRUSTED_PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+TRUSTED_PATH = "/usr/sbin:/usr/bin:/sbin:/bin"
 EXPECTED_SUDO_USER = "server01_k8s-api-lb"
 CONFIG = "/etc/haproxy/haproxy.cfg"
 CFGDIR = "/etc/haproxy/conf.d"
@@ -56,6 +56,20 @@ def trusted_binary(name):
     if not value:
         raise Stop("MISSING_TOOL_" + name)
     return str(Path(value).resolve())
+
+
+def current_haproxy_pid():
+    systemctl = trusted_binary("systemctl")
+    proc = subprocess.run([systemctl, "show", "haproxy.service", "--property=MainPID", "--value"],
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          env={"PATH": TRUSTED_PATH, "LC_ALL": "C", "LANG": "C"},
+                          timeout=COMMAND_TIMEOUT_SECONDS, check=False)
+    if proc.returncode != 0:
+        raise Stop("HAPROXY_PID_QUERY_FAILED")
+    value = proc.stdout.decode(errors="replace").strip()
+    if not value.isdigit() or int(value) <= 1:
+        raise Stop("INVALID_HAPROXY_MAIN_PID")
+    return value
 
 
 def _shape(argv, input_bytes):
@@ -139,6 +153,8 @@ def validate_request(argv, input_bytes):
     if Path(argv[0]).resolve() != Path(expected):
         raise Stop("UNTRUSTED_BINARY_PATH")
     _shape(argv, input_bytes)
+    if name == "cat" and argv[1] != "/proc/" + current_haproxy_pid() + "/cmdline":
+        raise Stop("CAT_PID_NOT_HAPROXY")
     return [expected, *argv[1:]]
 
 
@@ -178,14 +194,7 @@ def require_ok(proc, label):
 
 def preflight(expected_sha, run_id):
     actual = ensure_context(expected_sha)
-    systemctl = trusted_binary("systemctl")
-    proc = subprocess.run([systemctl, "show", "haproxy.service", "--property=MainPID", "--value"],
-                          stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                          env={"PATH": TRUSTED_PATH, "LC_ALL": "C", "LANG": "C"},
-                          timeout=COMMAND_TIMEOUT_SECONDS, check=False)
-    pid_raw = require_ok(proc, "PID").decode(errors="replace").strip()
-    if not pid_raw.isdigit() or int(pid_raw) <= 1:
-        raise Stop("PREFLIGHT_INVALID_HAPROXY_PID")
+    pid_raw = current_haproxy_pid()
 
     checks = []
     checks.append(("cmdline", execute([trusted_binary("cat"), "/proc/" + pid_raw + "/cmdline"])))
