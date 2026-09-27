@@ -60,20 +60,25 @@ class HelperPolicyTests(unittest.TestCase):
 
     def test_source_set_binds_helper_bytes(self):
         self.assertIn("stageb_privileged_helper.py", common.source_files())
+        self.assertIn("stageb_privilege.sudoers", common.source_files())
 
     def test_runtime_runner_routes_privileged_command_through_helper(self):
         with tempfile.TemporaryDirectory() as tmp:
             runner = common.RuntimeRunner(Path(tmp),
                 {"sudo": "/usr/bin/sudo", "nft": "/usr/sbin/nft"},
-                helper_sha="b" * 64)
+                helper_sha="b" * 64, policy_sha="c" * 64)
             with patch.object(common.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run:
                 result = runner.run("tables", ["nft", "-j", "list", "tables"], privileged=True)
             self.assertEqual(result["return_code"], 0)
             self.assertEqual(run.call_args.args[0], [
                 "/usr/bin/sudo", "-n", "--", common.PRIVILEGED_HELPER,
-                "--expected-sha", "b" * 64, "--",
+                "--expected-sha", "b" * 64,
+                "--expected-policy-sha", "c" * 64, "--",
                 "/usr/sbin/nft", "-j", "list", "tables"
             ])
+
+    def test_policy_file_is_part_of_runtime_source_binding(self):
+        self.assertIn(common.PRIVILEGED_POLICY_SOURCE, common.source_files())
 
     def test_cp_legacy_privileged_path_is_unchanged_without_helper_mode(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -92,7 +97,7 @@ class HelperPolicyTests(unittest.TestCase):
     def test_privileged_command_without_reviewed_helper_sha_stops(self):
         with tempfile.TemporaryDirectory() as tmp:
             runner = common.RuntimeRunner(Path(tmp), {"sudo": "/usr/bin/sudo", "nft": "/usr/sbin/nft"},
-                                          require_helper=True)
+                                          helper_sha="b" * 64, require_helper=True)
             with self.assertRaises(common.Stop):
                 runner.run("tables", ["nft", "-j", "list", "tables"], privileged=True)
 
