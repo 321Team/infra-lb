@@ -1,0 +1,74 @@
+"""Local-only policy tests for the Stage B privileged helper. Never runs sudo or nft."""
+from pathlib import Path
+from types import SimpleNamespace
+import tempfile
+import unittest
+from unittest.mock import patch
+
+import stageb_common as common
+import stageb_privileged_helper as helper
+
+
+class HelperPolicyTests(unittest.TestCase):
+    def accepted(self, argv, payload=b""):
+        helper._shape(argv, payload)
+
+    def rejected(self, argv, payload=b""):
+        with self.assertRaises(helper.Stop):
+            helper._shape(argv, payload)
+
+    def test_only_exact_proc_cmdline_is_allowed(self):
+        self.accepted(["/usr/bin/cat", "/proc/1273/cmdline"])
+        self.rejected(["/usr/bin/cat", "/etc/shadow"])
+        self.rejected(["/usr/bin/cat", "/proc/1/status"])
+
+    def test_stats_socket_and_input_are_fixed(self):
+        argv = ["/usr/bin/socat", "-T", "1", "-", "UNIX-CONNECT:/var/lib/haproxy/stats"]
+        self.accepted(argv, b"show stat\n")
+        self.rejected(argv, b"show info\n")
+        self.rejected(["/usr/bin/socat", "-T", "1", "-", "TCP:10.1.93.104:6443"], b"show stat\n")
+
+    def test_nft_accepts_only_exact_bounded_stageb_rules(self):
+        run_id = "a" * 32
+        payload = helper.rules(run_id)
+        self.accepted(["/usr/sbin/nft", "-c", "-f", "-"], payload)
+        self.accepted(["/usr/sbin/nft", "-f", "-"], payload)
+        self.accepted(["/usr/sbin/nft", "-j", "list", "table", "inet", "p1lb_" + run_id])
+        self.accepted(["/usr/sbin/nft", "delete", "table", "inet", "p1lb_" + run_id])
+        self.rejected(["/usr/sbin/nft", "flush", "ruleset"])
+        self.rejected(["/usr/sbin/nft", "-f", "-"], payload.replace(b"10.1.93.104", b"10.1.93.103"))
+        self.rejected(["/usr/sbin/nft", "delete", "table", "inet", "firewalld"])
+
+    def test_config_hash_paths_cannot_escape_haproxy_scope(self):
+        self.accepted(["/usr/bin/sha256sum", "--", "/etc/haproxy/haproxy.cfg",
+                       "/etc/haproxy/conf.d/kubernetes.cfg"])
+        self.rejected(["/usr/bin/sha256sum", "--", "/etc/shadow"])
+        self.rejected(["/usr/bin/sha256sum", "--", "/etc/haproxy/haproxy.cfg",
+                       "/tmp/other.cfg"])
+
+    def test_source_set_binds_helper_bytes(self):
+        self.assertIn("stageb_privileged_helper.py", common.source_files())
+
+    def test_runtime_runner_routes_privileged_command_through_helper(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runner = common.RuntimeRunner(Path(tmp),
+                {"sudo": "/usr/bin/sudo", "nft": "/usr/sbin/nft"},
+                helper_sha="b" * 64)
+            with patch.object(common.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run:
+                result = runner.run("tables", ["nft", "-j", "list", "tables"], privileged=True)
+            self.assertEqual(result["return_code"], 0)
+            self.assertEqual(run.call_args.args[0], [
+                "/usr/bin/sudo", "-n", "--", common.PRIVILEGED_HELPER,
+                "--expected-sha", "b" * 64, "--",
+                "/usr/sbin/nft", "-j", "list", "tables"
+            ])
+
+    def test_privileged_command_without_reviewed_helper_sha_stops(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runner = common.RuntimeRunner(Path(tmp), {"sudo": "/usr/bin/sudo", "nft": "/usr/sbin/nft"})
+            with self.assertRaises(Exception):
+                runner.run("tables", ["nft", "-j", "list", "tables"], privileged=True)
+
+
+if __name__ == "__main__":
+    unittest.main()
