@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """Root-owned least-privilege helper for P1-LB-01 Stage B.
 
 Installed path: /usr/local/sbin/p1-lb-stageb-privileged
