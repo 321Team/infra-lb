@@ -60,7 +60,6 @@
       register: privilege_preflight
       changed_when: false
       when: inventory_hostname == 'k8s-api-lb01'
-      tags: [runtime-preflight]
 
     - name: Require read-only privilege preflight result
       ansible.builtin.assert:
@@ -70,7 +69,6 @@
           - (privilege_preflight.stdout | from_json).run_id == inputs.run_id
           - (privilege_preflight.stdout | from_json).helper_sha256 == inputs.source_hashes['stageb_privileged_helper.py']
       when: inventory_hostname == 'k8s-api-lb01'
-      tags: [runtime-preflight]
 
     - name: Stage into a new private work directory
       ansible.builtin.tempfile:
