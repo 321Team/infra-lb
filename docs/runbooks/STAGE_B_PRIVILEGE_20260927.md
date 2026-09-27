@@ -40,16 +40,16 @@
 
 ## 코드 Gate
 
-`source_files()`에 `stageb_privileged_helper.py`를 포함한다. 모든 privileged 호출은 helper를 통하고 helper는 매 호출마다 reviewed SHA를 재검증한다.
+`source_files()`에 `stageb_privileged_helper.py`와 `stageb_privilege.sudoers`를 모두 포함한다. 모든 privileged 호출은 helper를 통하고 helper는 매 호출마다 helper/policy reviewed SHA와 설치 파일의 root ownership/mode를 재검증한다.
 
 Runtime staging/observer보다 먼저 다음 read-only preflight가 수행된다:
 
 ~~~
 sudo -n -- /usr/local/sbin/p1-lb-stageb-privileged \
-  --preflight <reviewed-helper-sha256> <run_id>
+  --preflight <reviewed-helper-sha256> <reviewed-policy-sha256> <run_id>
 ~~~
 
-preflight는 HAProxy cmdline/config hash/stats, nft table/firewalld read, exact rule의 `nft -c`까지만 수행하며 mutation은 하지 않는다.
+preflight는 helper `root:root`/비쓰기 가능 mode와 sudoers `root:root 0440`/reviewed policy SHA를 먼저 확인한 뒤 HAProxy cmdline/config hash/stats, nft table/firewalld read, exact rule의 `nft -c`까지만 수행하며 mutation은 하지 않는다.
 
 ## 독립 리뷰 후 현장 설치
 
