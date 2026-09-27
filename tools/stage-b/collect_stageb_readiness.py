@@ -44,7 +44,8 @@ def ansible_args(executable, folder, private_key):
     # Inline one-host inventory is a temporary connection description only.
     # Existing p1-ans-01 inventory, SSH keys and remote accounts are not changed.
     extra = {"ansible_user": LB_USER, "ansible_become": False, "ansible_python_interpreter": "/usr/bin/python3",
-             "ansible_ssh_common_args": "-o BatchMode=yes -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes -o ConnectionAttempts=1 -o ConnectTimeout=5 -o ClearAllForwardings=yes -o PermitLocalCommand=no -o RemoteCommand=none"}
+             "ansible_ssh_use_tty": False,
+             "ansible_ssh_common_args": "-o BatchMode=yes -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes -o RequestTTY=no -o ConnectionAttempts=1 -o ConnectTimeout=5 -o ClearAllForwardings=yes -o PermitLocalCommand=no -o RemoteCommand=none"}
     return [executable, "10.1.93.109", "-i", "10.1.93.109,", "-c", "ssh", "-u", LB_USER,
             "--private-key", str(private_key), "-e", json.dumps(extra), "-m", "ansible.builtin.command", "-a", json.dumps({"argv": ["/usr/bin/python3", "-c", IDENTITY]}),
             "--tree", str(folder / "ansible-result")]
@@ -69,7 +70,7 @@ def inspect_ansible(folder, home, private_key_arg):
     if not exe:
         raise Stop("ANSIBLE_NOT_FOUND_SOURCE_EXISTING_ENV_FIRST")
     env = dict(os.environ, ANSIBLE_CONFIG=str(config), ANSIBLE_HOST_KEY_CHECKING="True",
-               ANSIBLE_NOCOLOR="1", ANSIBLE_TIMEOUT="5",
+               ANSIBLE_NOCOLOR="1", ANSIBLE_TIMEOUT="5", ANSIBLE_SSH_USETTY="false",
                ANSIBLE_SSH_ARGS="-o ControlMaster=no -o ControlPath=none -o ControlPersist=no")
     command = ansible_args(exe, folder, private_key)
     write_json(folder / "COMMAND.json", {"argv": command, "started": stamp(),
