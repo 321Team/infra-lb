@@ -18,6 +18,7 @@ EXPECTED_SUDO_USER = "server01_k8s-api-lb"
 CONFIG = "/etc/haproxy/haproxy.cfg"
 CFGDIR = "/etc/haproxy/conf.d"
 SOCKET = "/var/lib/haproxy/stats"
+POLICY = "/etc/sudoers.d/p1-lb-stageb"
 PREFIX = "p1lb_"
 MAX_INPUT_BYTES = 4096
 COMMAND_TIMEOUT_SECONDS = 3
@@ -167,13 +168,27 @@ def ensure_context(expected_sha=None):
     if path.is_symlink():
         raise Stop("HELPER_SYMLINK_FORBIDDEN")
     st = path.stat()
-    if st.st_uid != 0 or (st.st_mode & 0o022):
+    if st.st_uid != 0 or st.st_gid != 0 or (st.st_mode & 0o022):
         raise Stop("HELPER_OWNERSHIP_OR_MODE_UNSAFE")
     actual = sha(path)
     if expected_sha is not None:
         if not re.fullmatch(r"[0-9a-f]{64}", expected_sha) or actual != expected_sha:
             raise Stop("HELPER_SHA256_MISMATCH")
     return actual
+
+
+def ensure_policy(expected_sha):
+    if not re.fullmatch(r"[0-9a-f]{64}", expected_sha or ""):
+        raise Stop("POLICY_SHA256_REQUIRED")
+    path = Path(POLICY)
+    if path.is_symlink() or not path.is_file():
+        raise Stop("POLICY_FILE_MISSING_OR_SYMLINK")
+    st = path.stat()
+    if st.st_uid != 0 or st.st_gid != 0 or (st.st_mode & 0o777) != 0o440:
+        raise Stop("POLICY_OWNERSHIP_OR_MODE_UNSAFE")
+    if sha(path) != expected_sha:
+        raise Stop("POLICY_SHA256_MISMATCH")
+    return expected_sha
 
 
 def execute(argv, input_bytes=b""):
@@ -192,8 +207,9 @@ def require_ok(proc, label):
     return proc.stdout
 
 
-def preflight(expected_sha, run_id):
+def preflight(expected_sha, expected_policy_sha, run_id):
     actual = ensure_context(expected_sha)
+    policy_sha = ensure_policy(expected_policy_sha)
     pid_raw = current_haproxy_pid()
 
     checks = []
@@ -216,6 +232,7 @@ def preflight(expected_sha, run_id):
     return {
         "status": "PRIVILEGE_READY",
         "helper_sha256": actual,
+        "policy_sha256": policy_sha,
         "run_id": run_id,
         "haproxy_pid": int(pid_raw),
         "checks": [name for name, _ in checks],
@@ -225,15 +242,17 @@ def preflight(expected_sha, run_id):
 
 def main():
     try:
-        if len(sys.argv) == 4 and sys.argv[1] == "--preflight":
-            print(json.dumps(preflight(sys.argv[2], sys.argv[3]), sort_keys=True))
+        if len(sys.argv) == 5 and sys.argv[1] == "--preflight":
+            print(json.dumps(preflight(sys.argv[2], sys.argv[3], sys.argv[4]), sort_keys=True))
             return 0
-        if len(sys.argv) >= 5 and sys.argv[1] == "--expected-sha" and sys.argv[3] == "--":
+        if (len(sys.argv) >= 7 and sys.argv[1] == "--expected-sha"
+                and sys.argv[3] == "--expected-policy-sha" and sys.argv[5] == "--"):
             ensure_context(sys.argv[2])
+            ensure_policy(sys.argv[4])
             payload = sys.stdin.buffer.read(MAX_INPUT_BYTES + 1)
             if len(payload) > MAX_INPUT_BYTES:
                 raise Stop("STDIN_TOO_LARGE")
-            proc = execute(sys.argv[4:], payload)
+            proc = execute(sys.argv[6:], payload)
             sys.stdout.buffer.write(proc.stdout)
             sys.stderr.buffer.write(proc.stderr)
             return proc.returncode
