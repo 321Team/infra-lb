@@ -61,14 +61,19 @@ class ReadinessTests(unittest.TestCase):
                 check.inspect_nft(Fake(case), Path(tmp), "a" * 32)
 
     def test_ansible_probe_uses_fixed_one_host_noninteractive_no_become(self):
-        args = check.ansible_args("/usr/bin/ansible", Path("/tmp/mock-only"))
+        key = Path("/tmp/mock-only-key")
+        args = check.ansible_args("/usr/bin/ansible", Path("/tmp/mock-only"), key)
         self.assertEqual(args[1], "10.1.93.109")
         self.assertEqual(args[args.index("-i") + 1], "10.1.93.109,")
         extra = json.loads(args[args.index("-e") + 1])
         self.assertFalse(extra["ansible_become"])
+        self.assertFalse(extra["ansible_ssh_use_tty"])
         self.assertEqual(extra["ansible_user"], check.LB_USER)
         self.assertIn("StrictHostKeyChecking=yes", extra["ansible_ssh_common_args"])
         self.assertIn("BatchMode=yes", extra["ansible_ssh_common_args"])
+        self.assertIn("IdentitiesOnly=yes", extra["ansible_ssh_common_args"])
+        self.assertIn("RequestTTY=no", extra["ansible_ssh_common_args"])
+        self.assertEqual(args[args.index("--private-key") + 1], str(key))
         self.assertNotIn("--ask-pass", args)
 
     def test_actual_identity_and_failed_result_are_not_overridden_by_rc0(self):
