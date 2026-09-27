@@ -75,7 +75,8 @@ def main():
         try:
             import stageb_injector
             r = common.RuntimeRunner(folder, common.binaries(["sudo", "nft"]),
-                                     helper_sha=data["source_hashes"]["stageb_privileged_helper.py"])
+                                     helper_sha=data["source_hashes"]["stageb_privileged_helper.py"],
+                                     require_helper=True)
             instance = stageb_injector.Injector(r, folder, data)
             instance.counter = int(time.time())
             instance.attempted = True
