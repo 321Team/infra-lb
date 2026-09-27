@@ -113,11 +113,6 @@ def _shape(argv, input_bytes):
             raise Stop("SOCAT_INPUT_NOT_ALLOWED")
         return
 
-    if name == "haproxy":
-        if argv != [argv[0], "-c", "-f", CONFIG, "-f", CFGDIR] or input_bytes:
-            raise Stop("HAPROXY_ARGS_NOT_ALLOWED")
-        return
-
     if name == "nft":
         if argv == [argv[0], "-j", "list", "tables"] and not input_bytes:
             return
