@@ -74,7 +74,10 @@ def main():
         fd = common.lock(folder / "PROCESS.lock")
         try:
             import stageb_injector
-            r = common.RuntimeRunner(folder, common.binaries(["sudo", "env", "timeout", "nft"]))
+            r = common.RuntimeRunner(folder, common.binaries(["sudo", "nft"]),
+                                     helper_sha=data["source_hashes"]["stageb_privileged_helper.py"],
+                                     policy_sha=data["source_hashes"]["stageb_privilege.sudoers"],
+                                     require_helper=True)
             instance = stageb_injector.Injector(r, folder, data)
             instance.counter = int(time.time())
             instance.attempted = True

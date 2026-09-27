@@ -1,3 +1,5 @@
+> 2026-09-27 추가: 첫 실제 Runtime은 `initial_cmdline`의 `sudo -n` password requirement에서 fail-closed STOP했다. 원본 증적상 `fault_attempted=false`, `cleanup=NO_MUTATION_ATTEMPTED`, API sample 14/14 성공으로 서비스 영향은 없었다. 후속 최소권한 설계는 [STAGE_B_PRIVILEGE_20260927.md](STAGE_B_PRIVILEGE_20260927.md)를 따른다. 광범위 `NOPASSWD:ALL`은 사용하지 않는다.
+>
 > 2026-09-24 추가: [읽기 전용 잔여 점검](STAGE_B_READINESS_20260924.md)으로 별도 inventory 파일 없이 LB SSH를 확인하고, LB native nft --check 결과를 수집할 수 있다. Runtime v1.0의 수동 cleanup 명령 이력 보존 결함을 수정했으므로 운영 후보는 v1.1이며 검토 SHA도 수정 후 HEAD로 바뀐다.
 >
 > 2026-09-24 추가(v1.2): 이하영의 [독립 리뷰](https://github.com/321Team/infra-lb/pull/10#pullrequestreview-5301172238)에서 2건을 지적했다. (1) HAProxy `inter 2s fall 3` 감지에 수 초가 걸리는데 관측기가 API 요청 1회 실패로 즉시 STOP해 정상 실행도 통과 확률이 낮았다 — `maximum_failed_samples`/`maximum_continuous_failure_seconds` 두 입력으로 명시적 실패 허용 기준을 두도록 고쳤다(§8 참조). Lead가 매 실행마다 두 값을 직접 채워야 하며 기본값은 없다. (2) 장애·복구 후 필요한 최소 잔여 작업창을 `150`초로 체크했으나 실제 최악 소요는 `(fault 55 + recovery 65 + 최종 확인 40) = 160`초로 10초 짧았다 — `165`초로 정정했다. HAProxy 설정(`option redispatch`/`retries`) 변경은 하지 않았다.

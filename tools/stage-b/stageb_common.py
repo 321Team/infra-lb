@@ -18,6 +18,9 @@ SAMPLE_SECONDS = 2
 MAX_SAMPLE_SECONDS = 7
 MAX_RUN_SECONDS = 240
 TERMINAL = {"PASS_CANDIDATE", "STOP", "OBSERVER_COMPLETE"}
+PRIVILEGED_HELPER = "/usr/local/sbin/p1-lb-stageb-privileged"
+PRIVILEGED_HELPER_SOURCE = "stageb_privileged_helper.py"
+PRIVILEGED_POLICY_SOURCE = "stageb_privilege.sudoers"
 
 
 def atomic(path, value):
@@ -128,7 +131,8 @@ def binaries(names):
 
 def source_files():
     return ["collect_preflight.py", "collect_api_precheck.py", "stageb_common.py",
-            "stageb_observer.py", "stageb_injector.py", "stageb_agent.py", "stageb_rules.py"]
+            "stageb_observer.py", "stageb_injector.py", "stageb_agent.py", "stageb_rules.py",
+            PRIVILEGED_HELPER_SOURCE, PRIVILEGED_POLICY_SOURCE]
 
 
 def preserve_source(folder, data):
@@ -189,8 +193,9 @@ def require_lease(folder, run_id, now=None):
 
 class RuntimeRunner:
     """Shorter LB command bounds; no shell. Every command gets an original output pair."""
-    def __init__(self, folder, tools, seconds=2):
-        self.folder, self.tools, self.seconds, self.records = folder, tools, seconds, []
+    def __init__(self, folder, tools, seconds=2, helper_sha=None, policy_sha=None, require_helper=False):
+        self.folder, self.tools, self.seconds = folder, tools, seconds
+        self.helper_sha, self.policy_sha, self.require_helper, self.records = helper_sha, policy_sha, require_helper, []
         ledger = self.folder / "COMMANDS.json"
         if ledger.exists():
             previous = read(ledger)
@@ -200,7 +205,17 @@ class RuntimeRunner:
 
     def run(self, name, args, privileged=False, input_bytes=None):
         command = [self.tools[args[0]], *args[1:]]
-        if privileged:
+        if privileged and self.helper_sha is not None:
+            if (not re.fullmatch(r"[0-9a-f]{64}", self.helper_sha)
+                    or not isinstance(self.policy_sha, str)
+                    or not re.fullmatch(r"[0-9a-f]{64}", self.policy_sha)):
+                raise Stop("PRIVILEGED_HELPER_OR_POLICY_SHA_REQUIRED")
+            command = [self.tools["sudo"], "-n", "--", PRIVILEGED_HELPER,
+                       "--expected-sha", self.helper_sha,
+                       "--expected-policy-sha", self.policy_sha, "--", *command]
+        elif privileged:
+            if self.require_helper:
+                raise Stop("PRIVILEGED_HELPER_OR_POLICY_SHA_REQUIRED")
             command = [self.tools["sudo"], "-n", "--", self.tools["env"], "-i",
                        "PATH=" + TRUSTED_PATH, "LC_ALL=C", "LANG=C", self.tools["timeout"],
                        "--signal=TERM", "--kill-after=1s", str(self.seconds) + "s", *command]

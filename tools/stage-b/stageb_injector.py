@@ -214,7 +214,10 @@ def run(folder, data):
     fd = lock(folder.parent / ".p1lb-stageb-runtime.lock")
     try:
         r = RuntimeRunner(folder, binaries(["ip", "ss", "systemctl", "cat", "sha256sum", "find",
-                                          "nft", "socat", "sudo", "env", "timeout"]))
+                                          "nft", "socat", "sudo"]),
+                          helper_sha=data["source_hashes"]["stageb_privileged_helper.py"],
+                          policy_sha=data["source_hashes"]["stageb_privilege.sudoers"],
+                          require_helper=True)
         return Injector(r, folder, data).run()
     finally:
         os.close(fd)
