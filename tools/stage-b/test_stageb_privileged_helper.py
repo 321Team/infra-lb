@@ -63,10 +63,25 @@ class HelperPolicyTests(unittest.TestCase):
                 "/usr/sbin/nft", "-j", "list", "tables"
             ])
 
+    def test_cp_legacy_privileged_path_is_unchanged_without_helper_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runner = common.RuntimeRunner(Path(tmp),
+                {"sudo": "/usr/bin/sudo", "env": "/usr/bin/env", "timeout": "/usr/bin/timeout",
+                 "kubectl": "/usr/bin/kubectl"}, seconds=5)
+            with patch.object(common.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run:
+                result = runner.run("cp", ["kubectl", "get", "--raw=/readyz"], privileged=True)
+            self.assertEqual(result["return_code"], 0)
+            self.assertEqual(run.call_args.args[0][:8], [
+                "/usr/bin/sudo", "-n", "--", "/usr/bin/env", "-i",
+                "PATH=" + common.TRUSTED_PATH, "LC_ALL=C", "LANG=C"
+            ])
+            self.assertNotIn(common.PRIVILEGED_HELPER, run.call_args.args[0])
+
     def test_privileged_command_without_reviewed_helper_sha_stops(self):
         with tempfile.TemporaryDirectory() as tmp:
-            runner = common.RuntimeRunner(Path(tmp), {"sudo": "/usr/bin/sudo", "nft": "/usr/sbin/nft"})
-            with self.assertRaises(Exception):
+            runner = common.RuntimeRunner(Path(tmp), {"sudo": "/usr/bin/sudo", "nft": "/usr/sbin/nft"},
+                                          require_helper=True)
+            with self.assertRaises(common.Stop):
                 runner.run("tables", ["nft", "-j", "list", "tables"], privileged=True)
 
 
