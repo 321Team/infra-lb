@@ -216,6 +216,7 @@ def run(folder, data):
         r = RuntimeRunner(folder, binaries(["ip", "ss", "systemctl", "cat", "sha256sum", "find",
                                           "nft", "socat", "sudo"]),
                           helper_sha=data["source_hashes"]["stageb_privileged_helper.py"],
+                          policy_sha=data["source_hashes"]["stageb_privilege.sudoers"],
                           require_helper=True)
         return Injector(r, folder, data).run()
     finally:
