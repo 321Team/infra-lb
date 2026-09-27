@@ -192,8 +192,9 @@ def require_lease(folder, run_id, now=None):
 
 class RuntimeRunner:
     """Shorter LB command bounds; no shell. Every command gets an original output pair."""
-    def __init__(self, folder, tools, seconds=2, helper_sha=None):
-        self.folder, self.tools, self.seconds, self.helper_sha, self.records = folder, tools, seconds, helper_sha, []
+    def __init__(self, folder, tools, seconds=2, helper_sha=None, require_helper=False):
+        self.folder, self.tools, self.seconds = folder, tools, seconds
+        self.helper_sha, self.require_helper, self.records = helper_sha, require_helper, []
         ledger = self.folder / "COMMANDS.json"
         if ledger.exists():
             previous = read(ledger)
@@ -203,11 +204,17 @@ class RuntimeRunner:
 
     def run(self, name, args, privileged=False, input_bytes=None):
         command = [self.tools[args[0]], *args[1:]]
-        if privileged:
-            if not isinstance(self.helper_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", self.helper_sha):
+        if privileged and self.helper_sha is not None:
+            if not re.fullmatch(r"[0-9a-f]{64}", self.helper_sha):
                 raise Stop("PRIVILEGED_HELPER_SHA_REQUIRED")
             command = [self.tools["sudo"], "-n", "--", PRIVILEGED_HELPER,
                        "--expected-sha", self.helper_sha, "--", *command]
+        elif privileged:
+            if self.require_helper:
+                raise Stop("PRIVILEGED_HELPER_SHA_REQUIRED")
+            command = [self.tools["sudo"], "-n", "--", self.tools["env"], "-i",
+                       "PATH=" + TRUSTED_PATH, "LC_ALL=C", "LANG=C", self.tools["timeout"],
+                       "--signal=TERM", "--kill-after=1s", str(self.seconds) + "s", *command]
         record = dict(name=name, argv=command, privileged=privileged, started=stamp(),
                       stdin=input_bytes.decode("ascii") if input_bytes else None,
                       return_code=None, outer_timeout=False)
