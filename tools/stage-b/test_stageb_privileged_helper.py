@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 import stageb_common as common
 import stageb_privileged_helper as helper
+import stageb_rules
 
 
 class HelperPolicyTests(unittest.TestCase):
@@ -27,6 +28,17 @@ class HelperPolicyTests(unittest.TestCase):
         self.accepted(argv, b"show stat\n")
         self.rejected(argv, b"show info\n")
         self.rejected(["/usr/bin/socat", "-T", "1", "-", "TCP:10.1.93.104:6443"], b"show stat\n")
+
+    def test_helper_rule_bytes_match_canonical_renderer(self):
+        for run_id in ("a" * 32, "0123456789abcdef" * 2):
+            self.assertEqual(helper.rules(run_id), stageb_rules.rules(run_id))
+
+    def test_cmdline_request_is_bound_to_current_haproxy_pid(self):
+        with patch.object(helper, "trusted_binary", return_value="/usr/bin/cat"), \
+             patch.object(helper, "current_haproxy_pid", return_value="1273"):
+            helper.validate_request(["/usr/bin/cat", "/proc/1273/cmdline"], b"")
+            with self.assertRaises(helper.Stop):
+                helper.validate_request(["/usr/bin/cat", "/proc/1274/cmdline"], b"")
 
     def test_nft_accepts_only_exact_bounded_stageb_rules(self):
         run_id = "a" * 32
