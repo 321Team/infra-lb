@@ -40,7 +40,7 @@ class Fake:
 
 class ReadinessTests(unittest.TestCase):
     def test_lb_user_matches_runtime_account(self):
-        self.assertEqual(check.LB_USER, "server01_k8s--api-lb")
+        self.assertEqual(check.LB_USER, "server01_k8s-api-lb")
 
     def test_nft_check_has_no_apply_command(self):
         with tempfile.TemporaryDirectory() as tmp:
