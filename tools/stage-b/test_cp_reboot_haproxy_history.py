@@ -11,7 +11,7 @@ spec.loader.exec_module(collector)
 
 class ParserTests(unittest.TestCase):
     def test_expected_lb_account(self):
-        self.assertEqual(collector.EXPECTED_USER, "server01_k8s--api-lb")
+        self.assertEqual(collector.EXPECTED_USER, "server01_k8s-api-lb")
 
     def test_down_up_pair(self):
         text = (
