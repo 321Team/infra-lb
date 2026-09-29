@@ -11,6 +11,9 @@ import stageb_rules
 
 
 class HelperPolicyTests(unittest.TestCase):
+    def test_expected_sudo_user_matches_runtime_account(self):
+        self.assertEqual(helper.EXPECTED_SUDO_USER, "server01_k8s--api-lb")
+
     def accepted(self, argv, payload=b""):
         helper._shape(argv, payload)
 
