@@ -14,7 +14,7 @@ import subprocess
 import sys
 
 TRUSTED_PATH = "/usr/sbin:/usr/bin:/sbin:/bin"
-EXPECTED_SUDO_USER = "server01_k8s--api-lb"
+EXPECTED_SUDO_USER = "server01_k8s-api-lb"
 CONFIG = "/etc/haproxy/haproxy.cfg"
 CFGDIR = "/etc/haproxy/conf.d"
 SOCKET = "/var/lib/haproxy/stats"
