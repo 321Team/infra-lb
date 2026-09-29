@@ -21,7 +21,7 @@ ZIP과 `.zip.sha256`을 ansible01와 LB의 **각 일반 계정 홈**에 전달�
 | 서버 | 계정 | 이번 실행 |
 |---|---|---|
 | ansible01 | server01_ansible | 기존 인증으로 LB SSH identity 1회 확인 |
-| k8s-api-lb01 | server01_k8s--api-lb | native nft `--check` 및 전후 stateless 규칙 비교 |
+| k8s-api-lb01 | server01_k8s-api-lb | native nft `--check` 및 전후 stateless 규칙 비교 |
 
 각 서버에서 아래 공통 부분을 실행한다. 폴더가 없으면 생성하며, 기존 파일을 무조건 덮어쓰지 않는다. SHA가 다르면 다음 명령을 실행하지 않는다.
 
@@ -52,7 +52,7 @@ python3 collect_stageb_readiness.py --role ansible \
 )
 ```
 
-별도 inventory 파일은 요구하지 않는다. 프로세스 인자로만 `10.1.93.109,` 한 대를 지정하고 기존 계정 `server01_k8s--api-lb`로 host/user/uid/euid를 조회한다. 저장소 inventory를 수정하거나 영구 inventory를 만들지 않는다. 기존 p1-ans-01 설정과 이미 사용 가능한 SSH 인증만 사용한다. `--private-key "$ANSIBLE_PRIVATE_KEY_FILE"`로 기존 승인 키 경로를 명시하고 **BatchMode=yes·StrictHostKeyChecking=yes·IdentitiesOnly=yes·RequestTTY=no·Ansible use_tty=false·become=false**를 강제한다. 환경 파일의 변수가 export되지 않은 경우에도 키 선택이 모호해지지 않도록 경로를 명시적 인자로 전달한다. 키/비밀번호/known_hosts를 생성·완화하지 않는다. 현재 전용 키가 LB 일반 계정에 등록되지 않았다면 실패할 수 있으며, 이때 권한을 자동 확대하지 않는다.
+별도 inventory 파일은 요구하지 않는다. 프로세스 인자로만 `10.1.93.109,` 한 대를 지정하고 기존 계정 `server01_k8s-api-lb`로 host/user/uid/euid를 조회한다. 저장소 inventory를 수정하거나 영구 inventory를 만들지 않는다. 기존 p1-ans-01 설정과 이미 사용 가능한 SSH 인증만 사용한다. `--private-key "$ANSIBLE_PRIVATE_KEY_FILE"`로 기존 승인 키 경로를 명시하고 **BatchMode=yes·StrictHostKeyChecking=yes·IdentitiesOnly=yes·RequestTTY=no·Ansible use_tty=false·become=false**를 강제한다. 환경 파일의 변수가 export되지 않은 경우에도 키 선택이 모호해지지 않도록 경로를 명시적 인자로 전달한다. 키/비밀번호/known_hosts를 생성·완화하지 않는다. 현재 전용 키가 LB 일반 계정에 등록되지 않았다면 실패할 수 있으며, 이때 권한을 자동 확대하지 않는다.
 
 LB 계정이 PTY 할당을 허용하지 않아도 이 identity probe에는 TTY가 필요하지 않으므로 client-side PTY 요청을 명시적으로 비활성화한다. 서버의 SSH/PTY 정책은 변경하지 않는다.
 

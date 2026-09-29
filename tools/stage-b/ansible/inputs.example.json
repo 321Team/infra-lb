@@ -5,7 +5,7 @@
   "runtime_authorized": false,
   "lead": "이권욱",
   "target": "10.1.93.104:6443",
-  "lb_user": "server01_k8s--api-lb",
+  "lb_user": "server01_k8s-api-lb",
   "window_start_kst": "",
   "window_end_kst": "",
   "oob_reference": "",

@@ -22,9 +22,9 @@ import sys
 import tarfile
 import tempfile
 
-VERSION = "1.1"
+VERSION = "1.2"
 EXPECTED_HOST = "k8s-api-lb01"
-EXPECTED_USER = "server01_k8s--api-lb"
+EXPECTED_USER = "server01_k8s-api-lb"
 WINDOW_SINCE_UTC = "2026-09-27 08:33:00 UTC"   # 17:33 KST
 WINDOW_UNTIL_UTC = "2026-09-27 08:46:30 UTC"   # 17:46:30 KST
 TARGET_BACKEND = "k8s-control03"

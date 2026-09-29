@@ -33,7 +33,7 @@
 
 ### LB — `k8s-api-lb01 / 10.1.93.109`
 
-계정 기록: `server01_k8s--api-lb`, passwd home `/home/server01_k8s--api-lb`. 수집기가 실제 home을 조회한다. v1.1의 `collect_lb_injection_context.py`가 기존 `collect_preflight.py`의 점검 함수를 변경 없이 호출하고, LB firewalld/nftables 서비스 상태·nft ruleset·Runtime/Permanent zone 조회·CP3대 송신 경로·boot ID를 같은 묶음에 추가한다. 이 명령을 실행하면 기존 LB 명령을 별도로 반복할 필요가 없다.
+계정 기록: `server01_k8s-api-lb`, passwd home `/home/server01_k8s--api-lb`. 수집기가 실제 home을 조회한다. v1.1의 `collect_lb_injection_context.py`가 기존 `collect_preflight.py`의 점검 함수를 변경 없이 호출하고, LB firewalld/nftables 서비스 상태·nft ruleset·Runtime/Permanent zone 조회·CP3대 송신 경로·boot ID를 같은 묶음에 추가한다. 이 명령을 실행하면 기존 LB 명령을 별도로 반복할 필요가 없다.
 
 ```bash
 (
