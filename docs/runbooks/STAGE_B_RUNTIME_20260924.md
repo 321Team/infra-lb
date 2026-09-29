@@ -17,7 +17,7 @@
 - CP는 기존 control01 `10.1.93.102`, `svc_ansible`에서 `/etc/kubernetes/admin.conf`, context `kubernetes-admin@kubernetes`, 사용자 `kubernetes-admin`을 사용한다. endpoint는 `https://10.1.93.109:6443`, IP SAN/TLS 검증을 유지한다.
 - CP 정책·서비스·VM 변경, HAProxy MAINT/disable, firewalld reload/stop, 영구 설정 변경은 없다.
 - **ansible01 → LB SSH는 아직 확인되지 않았다.** 기존 `p1-ans-01/inventory/hosts.yml`에는 LB가 없다. 이미 승인된 LB SSH 접근이 있는 별도 inventory 파일을 `--lb-inventory`로 받는다. alias `k8s-api-lb01`, `ansible_host=10.1.93.109`, 승인된 일반 계정이 필요하다. 임시 inventory를 자동 생성하거나 키·권한·known_hosts를 변경하지 않는다. LB 접근이 없으면 이 조정기는 사용할 수 없고 주입 전에 STOP한다.
-- LB 접속 계정 후보는 이전 로그인에서 확인한 `server01_k8s-api-lb`이다. ansible01에서 이 계정으로 기존 SSH 인증과 `sudo -n` 명령 실행이 가능한지는 미확인이다. 계정 변경은 승인된 기존 범위에서 확인해야 한다.
+- LB 접속 계정 후보는 이전 로그인에서 확인한 `server01_k8s--api-lb`이다. ansible01에서 이 계정으로 기존 SSH 인증과 `sudo -n` 명령 실행이 가능한지는 미확인이다. 계정 변경은 승인된 기존 범위에서 확인해야 한다.
 - **`maximum_failed_samples`(1~20)·`maximum_continuous_failure_seconds`(1~30) 두 입력을 실행 전 Lead가 직접 확정한다.** 기본값이 없어 미기입/범위 밖 값은 `validate_inputs`가 거부한다. HAProxy 감지 시간(약6~8초)과 관측 간격(2초)을 근거로 값을 정하되, 너무 크면 실제 장애를 놓치고 너무 작으면 정상 전환도 STOP될 수 있다.
 
 ## 동작과 중단·회수
@@ -51,7 +51,7 @@ source "$HOME/.config/ansible/p1-ans-01.env"
 # 아래 경로는 기존 승인된 LB inventory의 실제 경로로 지정한다.
 python3 run_stageb.py --check-access \
   --lb-inventory /absolute/path/to/existing-lb-inventory.yml \
-  --lb-user server01_k8s-api-lb
+  --lb-user server01_k8s--api-lb
 )
 ```
 
