@@ -79,10 +79,10 @@ for case in ['success','api_failure']:
 # Unmodified production identity gates must reject local container before staging.
 folder=base/'guard';folder.mkdir(exist_ok=True)
 inventory={'all':{'hosts':{h:{'ansible_connection':'local','ansible_python_interpreter':sys.executable,
- 'ansible_host':ip,'ansible_user':u} for h,ip,u in [('k8s-control01','10.1.93.102','svc_ansible'),('k8s-api-lb01','10.1.93.109','server01_k8s--api-lb')]}}}
+ 'ansible_host':ip,'ansible_user':u} for h,ip,u in [('k8s-control01','10.1.93.102','svc_ansible'),('k8s-api-lb01','10.1.93.109','server01_k8s-api-lb')]}}}
 (folder/'inventory.yml').write_text(yaml.safe_dump(inventory))
 proc=subprocess.run([sys.executable,'-m','ansible.cli.playbook','-i',str(folder/'inventory.yml'),str(source/'runtime.yml'),
- '--tags','access','-e',json.dumps({'inputs':{'lb_user':'server01_k8s--api-lb'}})],env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=30)
+ '--tags','access','-e',json.dumps({'inputs':{'lb_user':'server01_k8s-api-lb'}})],env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=30)
 (folder/'ansible.log').write_text(proc.stdout)
 assert proc.returncode!=0 and 'Reject identity mismatch before creating any runtime folder' in proc.stdout
 assert 'Stage into a new private work directory' not in proc.stdout
