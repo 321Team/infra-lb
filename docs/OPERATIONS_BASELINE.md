@@ -13,7 +13,7 @@
 | 실제 서비스 입력 | `/etc/haproxy/haproxy.cfg` + `/etc/haproxy/conf.d` | PR15 cmdline·파일 목록 |
 | stats socket | `/var/lib/haproxy/stats`, mode 660, level admin | 편입 cfg |
 | SELinux | Enforcing 및 haproxy_connect_any=on의 과거 확인 | [수신/보완 리뷰](https://github.com/321Team/fds-project-evidence/blob/90093f88167055f81e8789d2a848f44ead0ee9ce/evidence/P1-LB-01/stage-a/received-20260907/19_stage_a_handoff_review.md), [Boolean 원본](https://github.com/321Team/fds-project-evidence/blob/90093f88167055f81e8789d2a848f44ead0ee9ce/evidence/P1-LB-01/stage-a/received-20260907/11_selinux_boolean.txt) |
-| 로그인 계정 | server01_k8s-api-lb / 실제 home `/home/server01_k8s--api-lb` | 제출 collector가 pwd로 조회한 결과 |
+| 로그인 계정 | server01_k8s--api-lb / 실제 home `/home/server01_k8s--api-lb` | 제출 collector가 pwd로 조회한 결과 |
 
 cfg SHA-256은 `afd19086ab8529d621185c231fa3c588eaeeb2025a08445e90f28cf27b00504f`다. cfg만 보관됐다는 사실로 conf.d·systemd·SELinux·firewalld 전체를 복원할 수 있다고 판단하지 않는다.
 
@@ -43,7 +43,7 @@ cfg SHA-256은 `afd19086ab8529d621185c231fa3c588eaeeb2025a08445e90f28cf27b00504f
 |---|---|
 | 방식 | **재검토 중** — 조직 정책상 GitHub App(Contents: Read, `infra-lb` 한정 설치) 후보. 기존 [FDS Project Sync 앱](https://github.com/321Team/fds-project-baseline/blob/main/governance/PROJECT_SYNC_RUNBOOK.md)은 범위(Issues/Projects, `fds-project-baseline` 전용, private key는 Actions Secret 전용)가 달라 재사용 불가 — 신규 App 필요 |
 | 대상 저장소 | `321Team/infra-lb` (이 저장소 한정) |
-| 대상 서버·계정 | `k8s-api-lb01` / `server01_k8s-api-lb` |
+| 대상 서버·계정 | `k8s-api-lb01` / `server01_k8s--api-lb` |
 | 목적 | 검토된 commit의 `tools/stage-b/collect_preflight.py` 등 소스 pull. push·branch 생성 등 쓰기 동작 없음 |
 | 미결정 사항 | App private key의 물리적 보관 위치(LB 서버 직접 보관 vs. ansible01 등 중개 서버가 보관하고 fresh token/파일만 LB로 전달) — 보안 설계 결정으로 Lead 확정 필요 |
 
