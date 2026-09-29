@@ -18,7 +18,7 @@ from collect_preflight import Stop, json_output, require_ok, sha, stamp, write_j
 from stageb_common import RuntimeRunner, binaries
 from stageb_rules import PREFIX, rules, table_name, table_rows
 
-LB_USER = "server01_k8s-api-lb"
+LB_USER = "server01_k8s--api-lb"
 IDENTITY = ("import json,os,pwd,socket; p=pwd.getpwuid(os.getuid()); "
             "print(json.dumps(dict(host=socket.gethostname().split('.')[0],user=p.pw_name,"
             "uid=os.getuid(),euid=os.geteuid())))")

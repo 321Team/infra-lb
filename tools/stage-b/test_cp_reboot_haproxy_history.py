@@ -10,6 +10,9 @@ spec.loader.exec_module(collector)
 
 
 class ParserTests(unittest.TestCase):
+    def test_expected_lb_account(self):
+        self.assertEqual(collector.EXPECTED_USER, "server01_k8s--api-lb")
+
     def test_down_up_pair(self):
         text = (
             "2026-09-27T08:36:41.100000+00:00 host haproxy[100]: "
